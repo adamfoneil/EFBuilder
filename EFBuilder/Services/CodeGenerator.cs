@@ -1,0 +1,131 @@
+using EFBuilder.Models;
+using System.Text;
+
+namespace EFBuilder.Services;
+
+public class CodeGenerator
+{
+    public string GenerateEntityClass(EntityDefinition entity, string namespaceName)
+    {
+        var sb = new StringBuilder();
+        
+        // Add usings
+        sb.AppendLine("using Microsoft.EntityFrameworkCore;");
+        sb.AppendLine("using Microsoft.EntityFrameworkCore.Metadata.Builders;");
+        sb.AppendLine("using Testing.Conventions;");
+        sb.AppendLine();
+        sb.AppendLine($"namespace {namespaceName};");
+        sb.AppendLine();
+        
+        // Generate entity class
+        sb.AppendLine($"public class {entity.Name} : {entity.BaseClass}");
+        sb.AppendLine("{");
+        
+        // Generate properties
+        foreach (var property in entity.Properties)
+        {
+            var nullableIndicator = property.IsNullable ? "?" : "";
+            var defaultValue = GetDefaultValueExpression(property);
+            
+            sb.AppendLine($"\tpublic {property.Type}{nullableIndicator} {property.Name} {{ get; set; }}{defaultValue}");
+        }
+        
+        // Add empty line before navigation properties if any exist
+        if (entity.NavigationProperties.Any())
+        {
+            sb.AppendLine();
+            
+            // Generate navigation properties
+            foreach (var navProperty in entity.NavigationProperties)
+            {
+                sb.AppendLine($"\t{navProperty}");
+            }
+        }
+        
+        sb.AppendLine("}");
+        sb.AppendLine();
+        
+        // Generate configuration class
+        sb.AppendLine($"public class {entity.Name}Configuration : IEntityTypeConfiguration<{entity.Name}>");
+        sb.AppendLine("{");
+        sb.AppendLine($"\tpublic void Configure(EntityTypeBuilder<{entity.Name}> builder)");
+        sb.AppendLine("\t{");
+        
+        // Generate property configurations
+        foreach (var property in entity.Properties.Where(p => !p.IsForeignKey))
+        {
+            var config = GeneratePropertyConfiguration(entity.Name.ToLower()[0], property);
+            if (!string.IsNullOrEmpty(config))
+            {
+                sb.AppendLine($"\t\t{config}");
+            }
+        }
+        
+        // Generate foreign key configurations
+        var foreignKeys = entity.Properties.Where(p => p.IsForeignKey).ToList();
+        if (foreignKeys.Any())
+        {
+            foreach (var fk in foreignKeys)
+            {
+                var relatedEntityName = fk.Name.Substring(0, fk.Name.Length - 2);
+                sb.AppendLine();
+                sb.AppendLine($"\t\tbuilder.HasOne({entity.Name.ToLower()[0]} => {entity.Name.ToLower()[0]}.{relatedEntityName})");
+                sb.AppendLine($"\t\t\t.WithMany(e => e.{entity.Name}s)");
+                sb.AppendLine($"\t\t\t.HasForeignKey({entity.Name.ToLower()[0]} => {entity.Name.ToLower()[0]}.{fk.Name})");
+                sb.AppendLine("\t\t\t.OnDelete(DeleteBehavior.Restrict);");
+            }
+        }
+        
+        sb.AppendLine("\t}");
+        sb.AppendLine("}");
+        
+        return sb.ToString();
+    }
+    
+    private string GetDefaultValueExpression(PropertyDefinition property)
+    {
+        if (!string.IsNullOrEmpty(property.DefaultValue))
+        {
+            if (property.Type == "string")
+            {
+                return $" = \"{property.DefaultValue}\";";
+            }
+            else if (property.Type == "bool")
+            {
+                return $" = {property.DefaultValue.ToLower()};";
+            }
+            else
+            {
+                return $" = {property.DefaultValue};";
+            }
+        }
+        else if (property.Type == "string" && !property.IsNullable)
+        {
+            return " = default!;";
+        }
+        
+        return ";";
+    }
+    
+    private string GeneratePropertyConfiguration(char entityVariable, PropertyDefinition property)
+    {
+        var configs = new List<string>();
+        
+        if (!property.IsNullable && property.Type == "string")
+        {
+            configs.Add("IsRequired()");
+        }
+        
+        if (property.MaxLength.HasValue)
+        {
+            configs.Add($"HasMaxLength({property.MaxLength.Value})");
+        }
+        
+        if (configs.Any())
+        {
+            return $"builder.Property({entityVariable} => {entityVariable}.{property.Name}).{string.Join(".", configs)};";
+        }
+        
+        return "";
+    }
+}

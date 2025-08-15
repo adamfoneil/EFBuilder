@@ -1,0 +1,18 @@
+#Customer : BaseTable
+FirstName string(50)
+LastName string(50)
+Email string(50)?
+Address string(50)?
+Balance decimal
+IsActive bool = true
+
+#Status : BaseTable
+Name
+Description string(255)?
+
+#Order : BaseTable
+CustomerId
+Date datetime
+StatusId
+StatusDate datetime?
+TotalAmount decimal

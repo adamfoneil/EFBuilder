@@ -7,7 +7,7 @@ Balance decimal
 IsActive bool = true
 
 #Status : BaseTable
-Name
+Name string(50)
 Description string(255)?
 
 #Order : BaseTable

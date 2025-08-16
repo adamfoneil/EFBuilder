@@ -95,7 +95,7 @@ try
         Console.WriteLine("No entity files were generated.");
         return;
     }
-    
+
     // Ensure output directory exists
     Directory.CreateDirectory(outputDirectory);
     
@@ -111,7 +111,7 @@ try
         }
         
         File.WriteAllText(outputPath, kvp.Value);
-        Console.WriteLine($"Generated: {outputPath}");
+        Console.WriteLine($"Wrote: {outputPath}");
     }
     
     Console.WriteLine($"\nSuccessfully generated {allGeneratedFiles.Count} entity files in '{outputDirectory}'.");

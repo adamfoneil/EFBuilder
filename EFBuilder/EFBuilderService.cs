@@ -27,8 +27,10 @@ public class EFBuilderService
         foreach (var entity in entities)
         {
             var code = _generator.GenerateEntityClass(entity, actualNamespace, settings);
-            results.Add($"{entity.Name}.cs", code);
-        }
+            var fileName = $"{entity.Name}.cs";
+			results.Add(fileName, code);
+            Console.WriteLine($"Generated: {fileName}");
+		}
         
         return results;
     }

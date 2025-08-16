@@ -10,7 +10,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>efb</ToolCommandName>
     <PackageId>EFBuilder.CLI</PackageId>
-    <Authors>Adam Foneil</Authors>
+    <Authors>Adam O'Neil</Authors>
     <Description>A .NET tool for generating Entity Framework Core entities from markdown-style syntax</Description>
     <PackageProjectUrl>https://github.com/adamfoneil/EFBuilder.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/EFBuilder.CLI</RepositoryUrl>

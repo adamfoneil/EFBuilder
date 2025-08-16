@@ -17,9 +17,9 @@ public class EntityParser
 
         foreach (var line in lines)
         {
-            if (line.StartsWith("#"))
+            if (currentEntity == null || IsEntityHeader(line))
             {
-                // Parse entity definition: #EntityName : BaseClass
+                // Parse entity definition: EntityName : BaseClass
                 currentEntity = ParseEntityHeader(line);
                 if (currentEntity != null)
                 {
@@ -43,10 +43,17 @@ public class EntityParser
         return entities;
     }
 
+    private bool IsEntityHeader(string line)
+    {
+        // Entity headers contain a colon and optionally start with #
+        return line.Contains(':') && (line.StartsWith("#") || Regex.IsMatch(line, @"^\w+\s*:\s*\w+"));
+    }
+
     private EntityDefinition? ParseEntityHeader(string line)
     {
-        // Parse: #EntityName : BaseClass
-        var match = Regex.Match(line, @"^#(\w+)\s*:\s*(\w+)$");
+        // Parse: EntityName : BaseClass (with or without # prefix)
+        var cleanLine = line.StartsWith("#") ? line.Substring(1).Trim() : line;
+        var match = Regex.Match(cleanLine, @"^(\w+)\s*:\s*(\w+)$");
         if (match.Success)
         {
             return new EntityDefinition
@@ -66,8 +73,16 @@ public class EntityParser
         // PropertyName type = defaultValue
         // PropertyName type
         // PropertyName (for foreign keys ending in "Id")
+        // #PropertyName type (for unique index properties)
 
         var property = new PropertyDefinition();
+        
+        // Check if this property should be part of a unique index
+        if (line.StartsWith("#"))
+        {
+            property.IsUniqueIndex = true;
+            line = line.Substring(1).Trim();
+        }
 
         // Check for default value assignment
         var parts = line.Split('=', 2);

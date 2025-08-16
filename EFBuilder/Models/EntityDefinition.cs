@@ -18,4 +18,5 @@ public class PropertyDefinition
     public bool IsNullable { get; set; }
     public string? DefaultValue { get; set; }
     public bool IsForeignKey { get; set; }
+    public bool IsUniqueIndex { get; set; }
 }

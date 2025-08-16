@@ -5,7 +5,7 @@ namespace EFBuilder.Services;
 
 public class CodeGenerator
 {
-    public string GenerateEntityClass(EntityDefinition entity, string namespaceName)
+    public string GenerateEntityClass(EntityDefinition entity, string namespaceName, Models.EFBuilderSettings settings)
     {
         var sb = new StringBuilder();
         
@@ -15,10 +15,14 @@ public class CodeGenerator
         sb.AppendLine("// </auto-generated>");
         sb.AppendLine();
         
+        // Add nullable enable directive
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine();
+        
         // Add usings
         sb.AppendLine("using Microsoft.EntityFrameworkCore;");
         sb.AppendLine("using Microsoft.EntityFrameworkCore.Metadata.Builders;");
-        sb.AppendLine("using Testing.Conventions;");
+        sb.AppendLine($"using {settings.BaseClassNamespace};");
         sb.AppendLine();
         sb.AppendLine($"namespace {namespaceName};");
         sb.AppendLine();
@@ -33,7 +37,7 @@ public class CodeGenerator
             var nullableIndicator = property.IsNullable ? "?" : "";
             var defaultValue = GetDefaultValueExpression(property);
             
-            sb.AppendLine($"\tpublic {property.Type}{nullableIndicator} {property.Name} {{ get; set; }}{defaultValue}");
+            sb.AppendLine($"\tpublic {property.Type}{nullableIndicator} {property.Name} {{ get; set; }}{defaultValue};");
         }
         
         // Add empty line before navigation properties if any exist
@@ -82,6 +86,15 @@ public class CodeGenerator
             }
         }
         
+        // Generate unique index configurations
+        var uniqueIndexProperties = entity.Properties.Where(p => p.IsUniqueIndex).ToList();
+        if (uniqueIndexProperties.Any())
+        {
+            sb.AppendLine();
+            var propertyNames = string.Join(", ", uniqueIndexProperties.Select(p => $"{entity.Name.ToLower()[0]} => {entity.Name.ToLower()[0]}.{p.Name}"));
+            sb.AppendLine($"\t\tbuilder.HasIndex({propertyNames}).IsUnique();");
+        }
+        
         sb.AppendLine("\t}");
         sb.AppendLine("}");
         
@@ -94,23 +107,23 @@ public class CodeGenerator
         {
             if (property.Type == "string")
             {
-                return $" = \"{property.DefaultValue}\";";
+                return $" = \"{property.DefaultValue}\"";
             }
             else if (property.Type == "bool")
             {
-                return $" = {property.DefaultValue.ToLower()};";
+                return $" = {property.DefaultValue.ToLower()}";
             }
             else
             {
-                return $" = {property.DefaultValue};";
+                return $" = {property.DefaultValue}";
             }
         }
         else if (property.Type == "string" && !property.IsNullable)
         {
-            return " = default!;";
+            return " = default!";
         }
         
-        return ";";
+        return "";
     }
     
     private string GeneratePropertyConfiguration(char entityVariable, PropertyDefinition property)

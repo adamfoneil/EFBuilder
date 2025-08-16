@@ -37,7 +37,7 @@ public class CodeGenerator
             var nullableIndicator = property.IsNullable ? "?" : "";
             var defaultValue = GetDefaultValueExpression(property);
             
-            sb.AppendLine($"\tpublic {property.Type}{nullableIndicator} {property.Name} {{ get; set; }}{defaultValue};");
+            sb.AppendLine($"\tpublic {property.Type}{nullableIndicator} {property.Name} {{ get; set; }}{defaultValue}");
         }
         
         // Add empty line before navigation properties if any exist
@@ -107,11 +107,11 @@ public class CodeGenerator
         {
             if (property.Type == "string")
             {
-                return $" = \"{property.DefaultValue}\"";
+                return $" = \"{property.DefaultValue}\";";
             }
             else if (property.Type == "bool")
             {
-                return $" = {property.DefaultValue.ToLower()}";
+                return $" = {property.DefaultValue.ToLower()};";
             }
             else
             {
@@ -120,10 +120,10 @@ public class CodeGenerator
         }
         else if (property.Type == "string" && !property.IsNullable)
         {
-            return " = default!";
+            return " = default!;";
         }
         
-        return "";
+        return string.Empty;
     }
     
     private string GeneratePropertyConfiguration(char entityVariable, PropertyDefinition property)
@@ -145,6 +145,6 @@ public class CodeGenerator
             return $"builder.Property({entityVariable} => {entityVariable}.{property.Name}).{string.Join(".", configs)};";
         }
         
-        return "";
+        return string.Empty;
     }
 }

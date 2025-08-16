@@ -56,7 +56,7 @@ if (inputFiles.Count == 0)
     }
     
     inputFiles = discoveredFiles;
-    Console.WriteLine($"Auto-discovered {inputFiles.Count} file(s): {string.Join(", ", inputFiles.Select(Path.GetFileName))}");
+    Console.WriteLine($"Discovered {inputFiles.Count} file(s): {string.Join(", ", inputFiles.Select(Path.GetFileName))}");
 }
 
 // Set default output directory to parent directory if not specified
@@ -106,7 +106,7 @@ try
         // Check if file already exists
         if (File.Exists(outputPath))
         {
-            Console.WriteLine($"Warning: File '{outputPath}' already exists, skipping to avoid overwrite.");
+            Console.WriteLine($"{outputPath} already exists, skipping to avoid overwrite.");
             continue;
         }
         

@@ -1,0 +1,19 @@
+Company : BaseTable
+#Name string(100)
+#Code string(20)
+Address string(255)?
+IsActive bool = true
+
+Employee : BaseTable
+CompanyId
+#Email string(100)
+FirstName string(50)
+LastName string(50)
+Salary decimal?
+HireDate datetime
+
+Department : BaseTable
+CompanyId
+#Name string(50)
+Budget decimal = 0
+ManagerId

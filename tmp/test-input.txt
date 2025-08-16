@@ -1,4 +1,0 @@
-#Customer : BaseTable
-FirstName string(50)
-LastName string(50)
-Email string(50)?

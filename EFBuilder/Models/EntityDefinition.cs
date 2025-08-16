@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-
 namespace EFBuilder.Models;
 
 public class EntityDefinition
 {
     public string Name { get; set; } = string.Empty;
     public string BaseClass { get; set; } = string.Empty;
-    public List<PropertyDefinition> Properties { get; set; } = new();
-    public List<string> NavigationProperties { get; set; } = new();
+    public List<PropertyDefinition> Properties { get; set; } = [];
+    public List<string> NavigationProperties { get; set; } = [];
 }
 
 public class PropertyDefinition

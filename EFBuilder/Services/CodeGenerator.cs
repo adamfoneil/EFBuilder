@@ -5,7 +5,7 @@ namespace EFBuilder.Services;
 
 public class CodeGenerator
 {
-    public string GenerateEntityClass(EntityDefinition entity, string namespaceName, Models.EFBuilderSettings settings)
+    public string GenerateEntityClass(EntityDefinition entity, string namespaceName, EFBuilderSettings settings)
     {
         var sb = new StringBuilder();
         

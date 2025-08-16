@@ -80,9 +80,8 @@ try
         Console.WriteLine($"Processing: {Path.GetFileName(inputFile)}");
         
         var input = File.ReadAllText(inputFile);
-        var namespaceName = "Generated"; // Default namespace
         
-        var generatedFiles = service.GenerateEntitiesFromInput(input, namespaceName);
+        var generatedFiles = service.GenerateEntitiesFromInput(input);
         
         // Merge generated files (later files override earlier ones if same name)
         foreach (var kvp in generatedFiles)
@@ -103,6 +102,14 @@ try
     foreach (var kvp in allGeneratedFiles)
     {
         var outputPath = Path.Combine(outputDirectory, kvp.Key);
+        
+        // Check if file already exists
+        if (File.Exists(outputPath))
+        {
+            Console.WriteLine($"Warning: File '{outputPath}' already exists, skipping to avoid overwrite.");
+            continue;
+        }
+        
         File.WriteAllText(outputPath, kvp.Value);
         Console.WriteLine($"Generated: {outputPath}");
     }

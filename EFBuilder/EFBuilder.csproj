@@ -5,6 +5,16 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
+    <!-- Configure as a dotnet tool -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>efb</ToolCommandName>
+    <PackageId>EFBuilder.CLI</PackageId>
+    <Authors>Adam Foneil</Authors>
+    <Description>A .NET tool for generating Entity Framework Core entities from markdown-style syntax</Description>
+    <PackageProjectUrl>https://github.com/adamfoneil/EFBuilder.CLI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/adamfoneil/EFBuilder.CLI</RepositoryUrl>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
 </Project>

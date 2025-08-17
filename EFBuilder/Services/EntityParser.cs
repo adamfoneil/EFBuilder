@@ -5,7 +5,7 @@ namespace EFBuilder.Services;
 
 public class EntityParser
 {
-    public List<EntityDefinition> ParseInput(string input)
+    public static List<EntityDefinition> ParseInput(string input)
     {
         var entities = new List<EntityDefinition>();
         var lines = input.Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -46,7 +46,6 @@ public class EntityParser
     private static bool IsEntityHeader(string line) =>
 		line.Contains(':') && (line.StartsWith("#") || Regex.IsMatch(line, @"^\w+\s*:\s*\w+"));
 
-
 	private static EntityDefinition? ParseEntityHeader(string line)
     {
         // Parse: EntityName : BaseClass (with or without # prefix)
@@ -63,7 +62,7 @@ public class EntityParser
         return null;
     }
 
-    private PropertyDefinition? ParseProperty(string line)
+    private static PropertyDefinition? ParseProperty(string line)
     {
         // Parse various property formats:
         // PropertyName type(length)?

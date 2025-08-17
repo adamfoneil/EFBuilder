@@ -21,7 +21,7 @@ public class EFBuilderService
         var settings = _settingsService.LoadSettings();
         var actualNamespace = namespaceName ?? settings.DefaultNamespace;
         
-        var entities = _parser.ParseInput(input);
+        var entities = EntityParser.ParseInput(input);
         var results = new Dictionary<string, string>();
         
         foreach (var entity in entities)

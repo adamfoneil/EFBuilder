@@ -14,7 +14,7 @@
     <Description>A .NET tool for generating Entity Framework Core entities from markdown-style syntax</Description>
     <PackageProjectUrl>https://github.com/adamfoneil/EFBuilder.CLI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/adamfoneil/EFBuilder.CLI</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>EF Builder CLI tool</Title>
     <Copyright>Copyright (c) 2025 Adam O'Neil</Copyright>

@@ -82,9 +82,15 @@ try
         var input = File.ReadAllText(inputFile);
         
         var generatedFiles = service.GenerateEntitiesFromInput(input);
-        
-        // Merge generated files (later files override earlier ones if same name)
-        foreach (var kvp in generatedFiles)
+
+        if (!generatedFiles.Any())
+        {
+            Console.WriteLine($"No entities found in '{inputFile}'.");
+            continue;
+		}
+
+		// Merge generated files (later files override earlier ones if same name)
+		foreach (var kvp in generatedFiles)
         {
             allGeneratedFiles[kvp.Key] = kvp.Value;
         }

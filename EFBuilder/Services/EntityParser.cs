@@ -37,19 +37,17 @@ public class EntityParser
             }
         }
 
-        // Detect foreign key relationships and add navigation properties
-        AddNavigationProperties(entities);
+		// Detect foreign key relationships and add navigation properties
+		AddNavigationProperties(entities);
 
         return entities;
     }
 
-    private bool IsEntityHeader(string line)
-    {
-        // Entity headers contain a colon and optionally start with #
-        return line.Contains(':') && (line.StartsWith("#") || Regex.IsMatch(line, @"^\w+\s*:\s*\w+"));
-    }
+    private static bool IsEntityHeader(string line) =>
+		line.Contains(':') && (line.StartsWith("#") || Regex.IsMatch(line, @"^\w+\s*:\s*\w+"));
 
-    private EntityDefinition? ParseEntityHeader(string line)
+
+	private static EntityDefinition? ParseEntityHeader(string line)
     {
         // Parse: EntityName : BaseClass (with or without # prefix)
         var cleanLine = line.StartsWith("#") ? line.Substring(1).Trim() : line;
@@ -81,7 +79,7 @@ public class EntityParser
         if (line.StartsWith("#"))
         {
             property.IsUniqueIndex = true;
-            line = line.Substring(1).Trim();
+            line = line[1..].Trim();
         }
 
         // Check for default value assignment
@@ -137,20 +135,18 @@ public class EntityParser
         return null;
     }
 
-    private string ConvertTypeName(string typeName)
-    {
-        return typeName.ToLower() switch
-        {
-            "string" => "string",
-            "int" => "int",
-            "decimal" => "decimal",
-            "bool" => "bool",
-            "datetime" => "DateTime",
-            _ => typeName
-        };
-    }
+    private static string ConvertTypeName(string typeName) =>
+		typeName.ToLower() switch
+		{
+			"string" => "string",
+			"int" => "int",
+			"decimal" => "decimal",
+			"bool" => "bool",
+			"datetime" => "DateTime",
+			_ => typeName
+		};
 
-    private void AddNavigationProperties(List<EntityDefinition> entities)
+	private static void AddNavigationProperties(List<EntityDefinition> entities)
     {
         foreach (var entity in entities)
         {

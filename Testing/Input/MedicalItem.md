@@ -1,3 +1,4 @@
+// inserted at appt checkin, intended to give some separation from pending item, impervious to invoicing
 MedicalItem : BaseTable
 #AppointmentId
 #ItemId

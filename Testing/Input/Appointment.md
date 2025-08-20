@@ -10,6 +10,6 @@ VolumeClientId Client? <VolumeAppointments // shelter/rescue/group
 CopayClientId Client? <CopayAppointments // additional payer (grant)
 TransportClientId Client? <TransportAppointments
 HasRabiesVaccineProof bool
-KennelSizeId?
+KennelSizeId? <Appointments
 Points int
 PointsClientId Client? <PointsAppointments // if null points go to clinic

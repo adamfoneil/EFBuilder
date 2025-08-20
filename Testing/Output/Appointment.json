@@ -4,61 +4,53 @@
 	"Properties": [
 		{
 			"Name": "LocationId",
-			"TypeExpression": null,
 			"IsNullable": false,
 			"InPrimaryKey": true,
 			"ReferencedEntity": "Location",
 			"ClrType": "int"
 		},
 		{
-			"Name": "TypeId",
-			"TypeExpression": "AppointmentType",
+			"Name": "TypeId",			
 			"IsNullable": false,
 			"InPrimaryKey": true,
 			"ReferencedEntity": "AppointmentType",
 			"ClrType": "int"
 		},
 		{
-			"Name": "PatientId",
-			"TypeExpression": null,
+			"Name": "PatientId",			
 			"IsNullable": false,
 			"InPrimaryKey": true,
 			"ReferencedEntity": "Patient",
 			"ClrType": "int"
 		},
 		{
-			"Name": "Date",
-			"TypeExpression": null,
+			"Name": "Date",			
 			"IsNullable": false,
 			"InPrimaryKey": true,
 			"ClrType": "DateOnly"
 		},
 		{
-			"Name": "DropOff",
-			"TypeExpression": null,
+			"Name": "DropOff",			
 			"IsNullable": false,
 			"InPrimaryKey": false,
 			"ClrType": "TimeOnly"
 		},
 		{
-			"Name": "Pickup",
-			"TypeExpression": "DateTime",
+			"Name": "Pickup",			
 			"IsNullable": false,
 			"InPrimaryKey": false,
 			"ReferencedEntity": null,
 			"ClrType": "DateTime"
 		},
 		{
-			"Name": "StatusId",
-			"TypeExpression": "AppointmentStatus",
+			"Name": "StatusId",			
 			"IsNullable": false,
 			"InPrimaryKey": false,
 			"ReferencedEntity": "AppointmentStatus",
 			"ClrType": "int"
 		},
 		{
-			"Name": "VolumeClientId",
-			"TypeExpression": "Client?",
+			"Name": "VolumeClientId",			
 			"IsNullable": true,
 			"InPrimaryKey": false,
 			"ReferencedEntity": "Client",
@@ -68,8 +60,7 @@
 			"Comments": "shelter/rescue/group"
 		},
 		{
-			"Name": "CopayClientId",
-			"TypeExpression": "Client?",
+			"Name": "CopayClientId",			
 			"IsNullable": true,
 			"InPrimaryKey": false,
 			"ReferencedEntity": "Client",
@@ -80,12 +71,36 @@
 		},
 		{
 			"Name": "TransportClientId",
-			"TypeExpression": "Client?",
 			"IsNullable": true,
 			"InPrimaryKey": false,
 			"ReferencedEntity": "Client",
+			"ParentProperty": "TransportClient",
+			"ChildCollection": "TransportAppointments",
 			"ClrType": "int",
-			"Comments": ""
+			"Comments": null
+		},
+		{
+			"Name": "HasRabiesVaccineProof",
+			"ClrType": "bool"
+		},
+		{
+			"Name": "KennelSizeId",
+			"ReferencedEntity": "KennelSize",
+			"IsNullable": true,
+			"ClrType": "int",
+			"ParentProperty": "KennelSize",
+			"ChildCollection": "Appointments"
+		},
+		{
+			"Name": "Points",
+			"ClrType": "int",
+			"IsNullable": false,
+		},
+		{
+			"Name": "PointsClientId",
+			"ReferencedEntity": "Client",
+			"IsNullable": true,
+			"ChildCollection": "PointsAppointments"
 		}
 	]
 }

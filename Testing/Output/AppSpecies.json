@@ -1,0 +1,10 @@
+{
+	"Name": "Appointment",
+	"BaseClass": null,
+	"Properties": [
+		{
+			"Name": "Name",
+			"TypeExpression": "string(50)"
+		}
+	]
+}

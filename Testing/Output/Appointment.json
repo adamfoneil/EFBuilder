@@ -1,0 +1,91 @@
+{
+	"Name": "Appointment",
+	"BaseClass": "BaseTable",
+	"Properties": [
+		{
+			"Name": "LocationId",
+			"TypeExpression": null,
+			"IsNullable": false,
+			"InPrimaryKey": true,
+			"ReferencedEntity": "Location",
+			"ClrType": "int"
+		},
+		{
+			"Name": "TypeId",
+			"TypeExpression": "AppointmentType",
+			"IsNullable": false,
+			"InPrimaryKey": true,
+			"ReferencedEntity": "AppointmentType",
+			"ClrType": "int"
+		},
+		{
+			"Name": "PatientId",
+			"TypeExpression": null,
+			"IsNullable": false,
+			"InPrimaryKey": true,
+			"ReferencedEntity": "Patient",
+			"ClrType": "int"
+		},
+		{
+			"Name": "Date",
+			"TypeExpression": null,
+			"IsNullable": false,
+			"InPrimaryKey": true,
+			"ClrType": "DateOnly"
+		},
+		{
+			"Name": "DropOff",
+			"TypeExpression": null,
+			"IsNullable": false,
+			"InPrimaryKey": false,
+			"ClrType": "TimeOnly"
+		},
+		{
+			"Name": "Pickup",
+			"TypeExpression": "DateTime",
+			"IsNullable": false,
+			"InPrimaryKey": false,
+			"ReferencedEntity": null,
+			"ClrType": "DateTime"
+		},
+		{
+			"Name": "StatusId",
+			"TypeExpression": "AppointmentStatus",
+			"IsNullable": false,
+			"InPrimaryKey": false,
+			"ReferencedEntity": "AppointmentStatus",
+			"ClrType": "int"
+		},
+		{
+			"Name": "VolumeClientId",
+			"TypeExpression": "Client?",
+			"IsNullable": true,
+			"InPrimaryKey": false,
+			"ReferencedEntity": "Client",
+			"ParentProperty": "VolumeClient",
+			"ChildCollection": "VolumeAppointments",
+			"ClrType": "int",
+			"Comments": "shelter/rescue/group"
+		},
+		{
+			"Name": "CopayClientId",
+			"TypeExpression": "Client?",
+			"IsNullable": true,
+			"InPrimaryKey": false,
+			"ReferencedEntity": "Client",
+			"ParentProperty": "CopayClient",
+			"ChildCollection": "CopayAppointments",
+			"ClrType": "int",
+			"Comments": "additional payer (grant)"
+		},
+		{
+			"Name": "TransportClientId",
+			"TypeExpression": "Client?",
+			"IsNullable": true,
+			"InPrimaryKey": false,
+			"ReferencedEntity": "Client",
+			"ClrType": "int",
+			"Comments": ""
+		}
+	]
+}

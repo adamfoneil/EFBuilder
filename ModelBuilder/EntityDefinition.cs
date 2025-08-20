@@ -20,6 +20,7 @@ public class PropertyDefinition
 	public int? MaxLength { get; set; }
 	public bool IsNullable { get; set; }
 	public string? DefaultValue { get; set; }
+	public string? Comment { get; set; }
 	/// <summary>
 	/// is property part of unique index?
 	/// </summary>
@@ -33,7 +34,8 @@ public class PropertyDefinition
 	/// <summary>
 	/// parsed from TypeExpression, not edited directly
 	/// </summary>
-	public string? ReferencedEntity { get; set; }
+	public string? ReferencedEntity { get; set; }	
+	public string? ChildCollection { get; set; }
 	public bool ParseError { get; set; }
 	/// <summary>
 	/// error message if parsing failed

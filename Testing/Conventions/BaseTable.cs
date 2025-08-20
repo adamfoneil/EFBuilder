@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Testing.Conventions;
 
@@ -8,9 +9,11 @@ public class BaseTable
 
 	[MaxLength(50)]
 	public string CreatedBy { get; set; } = "system";
-	public DateTimeOffset CreatedAt { get; set; } = DateTime.Now;
+	[Column(TypeName = "timestamp without time zone")]
+	public DateTime CreatedAt { get; set; } = DateTime.Now;
 
 	[MaxLength(50)]
 	public string? UpdatedBy { get; set; }
-	public DateTimeOffset? UpdatedAt { get; set; }
+	[Column(TypeName = "timestamp without time zone")]
+	public DateTime? UpdatedAt { get; set; }
 }

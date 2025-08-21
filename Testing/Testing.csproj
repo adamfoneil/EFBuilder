@@ -17,7 +17,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="../EFBuilder/EFBuilder.csproj" />
+		<ProjectReference Include="..\ModelBuilder\ModelBuilder.csproj" />
 	</ItemGroup>
 	
 </Project>

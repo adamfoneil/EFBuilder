@@ -2,7 +2,7 @@
 
 namespace ModelBuilder;
 
-public class CodeGenerator
+public static class CodeGenerator
 {
 	public class Settings
 	{

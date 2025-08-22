@@ -3,6 +3,6 @@ Species : BaseTable
 #Name string(50)
 AppSpeciesId
 BaseName string(50)
-Abbreviation string(1)
+Abbreviation string(3)
 MinWeight int?
 IsActive bool = true

@@ -43,19 +43,19 @@ Always reference these instructions first and fallback to search or bash command
 The tool accepts "markdown" style entity definitions:
 
 ```
-#EntityName : BaseClass
+EntityName : BaseClass
 PropertyName type(length)
 OptionalProperty type?
 PropertyWithDefault type = defaultValue
 
-#AnotherEntity : BaseTable
+AnotherEntity : BaseTable
 ForeignKeyId
 NavigationProperty
 ```
 
 Example from `Testing/Resources/Case01/input.txt`:
 ```
-#Customer : BaseTable
+Customer : BaseTable
 FirstName string(50)
 LastName string(50)
 Email string(50)?
@@ -63,11 +63,11 @@ Address string(50)?
 Balance decimal
 IsActive bool = true
 
-#Status : BaseTable
+Status : BaseTable
 Name string(50)
 Description string(255)?
 
-#Order : BaseTable
+Order : BaseTable
 CustomerId
 Date datetime
 StatusId

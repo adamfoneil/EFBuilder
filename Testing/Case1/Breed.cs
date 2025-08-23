@@ -5,9 +5,9 @@ using Testing.Conventions;
 namespace Testing.Case1;
 
 public class Breed : BaseTable
-{
-	public int AppSpeciesId { get; set; }
+{	
 	public string Name { get; set; } = default!;
+	public int AppSpeciesId { get; set; }
 
 	public AppSpecies? AppSpecies { get; set; }
 }

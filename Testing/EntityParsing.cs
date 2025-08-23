@@ -24,6 +24,19 @@ public class EntityParsing
 		};
 
 		var actualFiles = CodeGenerator.Execute(settings, definitions);
+		
+		// Debug output
+		Console.WriteLine($"Found {definitions.Length} entities");
+		foreach (var entity in definitions)
+		{
+			Console.WriteLine($"Entity: {entity.Name}, BaseClass: {entity.BaseClass ?? "None"}");
+		}
+		Console.WriteLine($"Generated {actualFiles.Length} files:");
+		foreach (var file in actualFiles)
+		{
+			Console.WriteLine($"  {file.Filename}");
+		}
+		
 		var actualOutputByName = actualFiles.ToDictionary(f => f.Filename);
 
 		string[] outputFiles = [

@@ -13,6 +13,12 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 	public (EntityDefinition[] EntityDefinitions, string[] Errors) ParseEntities()
 	{
 		var entitySources = _contentAccessor.GetContent();
+		Console.WriteLine($"EntityParser: Found {entitySources.Length} entity sources");
+		foreach (var (name, source) in entitySources)
+		{
+			Console.WriteLine($"  Source: {name}, Length: {source.Length}");
+		}
+		
 		var entities = new List<EntityDefinition>();
 		var entityNames = entities.Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
@@ -22,14 +28,18 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 		{
 			try
 			{				
-				entities.Add(ParseEntity(source, entityNames));				
+				var entity = ParseEntity(source, entityNames);
+				Console.WriteLine($"  Parsed entity: {entity.Name}");
+				entities.Add(entity);				
 			}
 			catch (Exception ex)
 			{
+				Console.WriteLine($"  Error parsing {name}: {ex.Message}");
 				errors.Add($"{name}: {ex.Message}");
 			}
 		}
 
+		Console.WriteLine($"EntityParser: Total parsed {entities.Count} entities");
 		return ([.. entities], [..errors]);
 	}
 

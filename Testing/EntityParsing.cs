@@ -9,6 +9,8 @@ public class EntityParsing
 	[TestMethod]
 	public void Case1Schema()
 	{
+		if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
+
 		var schema = new ResourceEnumerator("Testing.SpayWise.", [
 			"Clinic.md",
 			"Species.md",
@@ -45,7 +47,7 @@ public class EntityParsing
 			debugInfo.AppendLine($"  {file.Filename}");
 		}
 		
-		System.IO.File.WriteAllText("/tmp/debug_output.txt", debugInfo.ToString());
+		System.IO.File.WriteAllText("tmp/debug_output.txt", debugInfo.ToString());
 		
 		var actualOutputByName = actualFiles.ToDictionary(f => f.Filename);
 
@@ -67,7 +69,7 @@ public class EntityParsing
 			debugInfo.AppendLine($"  Name: '{exp.Name}', Content length: {exp.Content.Length}");
 		}
 		
-		System.IO.File.WriteAllText("/tmp/debug_output.txt", debugInfo.ToString());
+		System.IO.File.WriteAllText("tmp/debug_output.txt", debugInfo.ToString());
 		
 		var expectedOutputByName = expectedOutput.ToDictionary(e => e.Name);
 		var failedFiles = new List<string>();
@@ -90,8 +92,8 @@ public class EntityParsing
 			var expectedContent = expectedOutputByName[expectedKey].Content;
 			
 			// Write actual content to file for debugging
-			System.IO.File.WriteAllText($"/tmp/actual_{file}", actualContent);
-			System.IO.File.WriteAllText($"/tmp/expected_{file}", expectedContent);
+			System.IO.File.WriteAllText($"tmp/actual_{file}", actualContent);
+			System.IO.File.WriteAllText($"tmp/expected_{file}", expectedContent);
 			
 			// Enhanced diagnostic output
 			if (actualContent != expectedContent)
@@ -105,7 +107,7 @@ public class EntityParsing
 				debugInfo.AppendLine(diffOutput);
 				
 				// Write diff to file for external examination
-				System.IO.File.WriteAllText($"/tmp/diff_{file}.txt", diffOutput);
+				System.IO.File.WriteAllText($"tmp/diff_{file}.txt", diffOutput);
 				
 				// Character-level analysis
 				var charDiff = FindFirstDifference(expectedContent, actualContent);
@@ -147,7 +149,7 @@ public class EntityParsing
 			}
 		}
 		
-		System.IO.File.WriteAllText("/tmp/debug_output.txt", debugInfo.ToString());
+		System.IO.File.WriteAllText("tmp/debug_output.txt", debugInfo.ToString());
 		
 		if (failedFiles.Any())
 		{

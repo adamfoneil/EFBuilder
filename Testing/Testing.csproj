@@ -12,6 +12,20 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Case1\AppSpecies.cs" />
+    <Compile Remove="Case1\Breed.cs" />
+    <Compile Remove="Case1\Clinic.cs" />
+    <Compile Remove="Case1\Species.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Case1\AppSpecies.cs" />
+    <EmbeddedResource Include="Case1\Breed.cs" />
+    <EmbeddedResource Include="Case1\Clinic.cs" />
+    <EmbeddedResource Include="Case1\Species.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
 	</ItemGroup>

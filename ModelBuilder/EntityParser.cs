@@ -12,7 +12,7 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 
 	public (EntityDefinition[] EntityDefinitions, string[] Errors) ParseEntities()
 	{
-		var entitySources = _contentAccessor.GetEntitySources();
+		var entitySources = _contentAccessor.GetContent();
 		var entities = new List<EntityDefinition>();
 		var entityNames = entities.Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
 

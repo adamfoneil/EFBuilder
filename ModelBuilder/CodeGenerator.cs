@@ -17,6 +17,9 @@ public static class CodeGenerator
 		public string? BaseClassNamespace { get; set; }
 	}
 
+	public static (string Filename, string Content)[] Execute(Settings settings, EntityDefinition[] entities) =>
+		[.. entities.Select(e => ($"{e.Name}.cs", Execute(settings, e, entities)))];
+
 	public static string Execute(Settings settings, EntityDefinition entity, EntityDefinition[] allEntities)
 	{
 		StringBuilder sb = new();

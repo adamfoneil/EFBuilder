@@ -1,22 +1,18 @@
 ﻿using ModelBuilder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Testing;
 
-internal class ResourceEntityEnumerator(IEnumerable<string> fileNames) : IEntityEnumerator
+internal class ResourceEnumerator(string prefix, IEnumerable<string> fileNames) : IEntityEnumerator
 {
+	private readonly string _prefix = prefix;
 	private readonly IEnumerable<string> _fileNames = fileNames;
 
-	public (string Name, string Content)[] GetEntitySources()
+	public (string Name, string Content)[] GetContent()
 	{
 		var resourceNames = Assembly.GetExecutingAssembly()
 			.GetManifestResourceNames()
-			.Join(_fileNames, name => name, name => name.Split('.').Last(), (resourceName, fileName) => resourceName, StringComparer.OrdinalIgnoreCase);
+			.Join(_fileNames, name => name, name => $"{_prefix}.{name}", (resourceName, fileName) => resourceName, StringComparer.OrdinalIgnoreCase);
 
 		List<(string Name, string Content)> results = [];
 

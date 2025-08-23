@@ -8,5 +8,5 @@ public interface IEntityEnumerator
 	/// <summary>
 	/// get the raw markdown for each entity in a source
 	/// </summary>	
-	(string Name, string Content)[] GetEntitySources();
+	(string Name, string Content)[] GetContent();
 }

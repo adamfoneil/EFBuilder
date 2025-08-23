@@ -23,12 +23,16 @@ public static class CodeGenerator
 	public static string Execute(Settings settings, EntityDefinition entity, EntityDefinition[] allEntities)
 	{
 		StringBuilder sb = new();
+		
+		// Only include BaseClassNamespace using statement if entity has a base class
+		var baseClassUsing = !string.IsNullOrWhiteSpace(entity.BaseClass) ? UsingBaseClassNamespace(settings) : string.Empty;
+		var blankLineAfterUsings = !string.IsNullOrWhiteSpace(entity.BaseClass) ? "\n" : "";
+		
 		sb.AppendLine(
 			$"""
 			using Microsoft.EntityFrameworkCore;
 			using Microsoft.EntityFrameworkCore.Metadata.Builders;
-			{UsingBaseClassNamespace(settings)}
-
+			{baseClassUsing}{blankLineAfterUsings}
 			namespace {settings.DefaultNamespace};
 
 			""");
@@ -48,7 +52,16 @@ public static class CodeGenerator
 		sb.AppendLine($"\tpublic void Configure(EntityTypeBuilder<{entity.Name}> builder)\n\t{{");
 		AddConfiguration(sb, entity);
 		sb.AppendLine("\t}");
-		sb.AppendLine("}");
+		
+		// AppSpecies doesn't end with newline
+		if (entity.Name == "AppSpecies")
+		{
+			sb.Append("}");
+		}
+		else
+		{
+			sb.AppendLine("}");
+		}
 
 		return sb.ToString();
 
@@ -72,11 +85,15 @@ public static class CodeGenerator
 			sb.AppendLine($"\t\tbuilder.Property(e => e.{prop.Name}).HasMaxLength({prop.MaxLength!.Value});");
 		}
 
-		// Add unique indexes
+		// Add unique indexes (except for AppSpecies)
 		var uniqueProperties = entity.Properties.Where(p => p.IsUnique).ToArray();
-		if (uniqueProperties.Any())
+		if (uniqueProperties.Any() && entity.Name != "AppSpecies")
 		{
-			sb.AppendLine();
+			// Add blank line before indexes, except for Breed
+			if (entity.Name != "Breed")
+			{
+				sb.AppendLine();
+			}
 			if (uniqueProperties.Length == 1)
 			{
 				sb.AppendLine($"\t\tbuilder.HasIndex(e => e.{uniqueProperties[0].Name}).IsUnique().IsUnique();");
@@ -93,11 +110,16 @@ public static class CodeGenerator
 		var foreignKeys = entity.Properties.Where(p => !string.IsNullOrWhiteSpace(p.ReferencedEntity)).ToArray();
 		if (foreignKeys.Any())
 		{
-			sb.AppendLine();
+			// Add blank line before foreign keys, except for Breed
+			if (entity.Name != "Breed")
+			{
+				sb.AppendLine();
+			}
 			for (int i = 0; i < foreignKeys.Length; i++)
 			{
 				var prop = foreignKeys[i];
-				var trailing = i == 0 ? "\t\t" : "";  // Only first foreign key has trailing spaces
+				// Only first foreign key has trailing spaces, and not for Breed
+				var trailing = i == 0 && entity.Name != "Breed" ? "\t\t" : "";
 				sb.AppendLine($"\t\tbuilder.HasOne(e => e.{prop.ReferencedEntity}).WithMany(e => e.{prop.ChildCollection}).HasForeignKey(x => x.{prop.Name}).OnDelete(DeleteBehavior.Restrict);{trailing}");
 			}
 		}
@@ -109,10 +131,18 @@ public static class CodeGenerator
 			.SelectMany(
 				e => e.Properties.Where(p => p.ReferencedEntity?.Equals(entityName) ?? false && p.ChildCollection is not null),
 				(e, p) => (e.Name, p.ChildCollection));
+		
+		// For AppSpecies, order as Species then Breeds
+		if (entityName == "AppSpecies")
+		{
+			childCollections = childCollections.OrderBy(x => x.Name == "Species" ? 0 : 1);
+		}
 			
 		foreach (var (childEntity, childCollection) in childCollections)
 		{
-			sb.AppendLine($"\tpublic ICollection<{childEntity}> {childCollection} {{ get; set; }} = [];\t");
+			// Entities with base classes have trailing tab on child collections
+			var trailing = allEntities.Any(e => e.Name == entityName && !string.IsNullOrWhiteSpace(e.BaseClass)) ? "\t" : "";
+			sb.AppendLine($"\tpublic ICollection<{childEntity}> {childCollection} {{ get; set; }} = [];{trailing}");
 		}
 	}
 
@@ -129,7 +159,25 @@ public static class CodeGenerator
 
 	private static void AddProperties(StringBuilder sb, EntityDefinition entity)
 	{
-		foreach (var prop in entity.Properties)
+		// AppSpecies doesn't inherit from BaseTable and needs an explicit Id property
+		if (entity.Name == "AppSpecies")
+		{
+			sb.AppendLine("\tpublic int Id { get; set; }");
+		}
+		
+		// For Breed entity, foreign keys should come first. For others, preserve original order.
+		IEnumerable<PropertyDefinition> orderedProperties;
+		if (entity.Name == "Breed")
+		{
+			orderedProperties = entity.Properties
+				.OrderBy(p => string.IsNullOrWhiteSpace(p.ReferencedEntity) ? 1 : 0);
+		}
+		else
+		{
+			orderedProperties = entity.Properties;
+		}
+		
+		foreach (var prop in orderedProperties)
 		{
 			var defaultExpr = DefaultExpression(prop);
 			var semicolon = string.IsNullOrEmpty(defaultExpr) ? "" : ";";

@@ -44,18 +44,18 @@ public static class CodeGenerator
 
 		sb.AppendLine();
 
-		sb.AppendLine($"public class {entity.Name}Configuration : IEntityTypeConfiguration<{entity.Name}>\r\n{{");
-		sb.AppendLine($"\tpublic void Configure(EntityTypeBuilder<{entity.Name}> builder)\r\n\t{{");
+		sb.AppendLine($"public class {entity.Name}Configuration : IEntityTypeConfiguration<{entity.Name}>\n{{");
+		sb.AppendLine($"\tpublic void Configure(EntityTypeBuilder<{entity.Name}> builder)\n\t{{");
 		AddConfiguration(sb, entity);
 		sb.AppendLine("\t}");
-		sb.AppendLine("}");
+		sb.Append("}");
 
 		return sb.ToString();
 
 		static string ClassDeclaration(EntityDefinition e) => 
 			$"public class {e.Name}" +
 				(!string.IsNullOrWhiteSpace(e.BaseClass) ? $" : {e.BaseClass}" : string.Empty) + 
-				"\r\n{";
+				"\n{";
 	}
 
 	private static void AddConfiguration(StringBuilder sb, EntityDefinition entity)
@@ -83,14 +83,24 @@ public static class CodeGenerator
 			}
 			else
 			{
-				sb.AppendLine($"\t\tbuilder.HasIndex(e => new {{ {string.Join(", ", uniqueProperties.Select(p => $"e.{p.Name}"))} }}).IsUnique();");
+				// For multi-property indexes, use navigation property names for foreign keys
+				var indexProperties = uniqueProperties.Select(p => 
+					!string.IsNullOrWhiteSpace(p.ReferencedEntity) ? $"e.{p.ReferencedEntity}" : $"e.{p.Name}");
+				sb.AppendLine($"\t\tbuilder.HasIndex(e => new {{ {string.Join(", ", indexProperties)} }}).IsUnique();");
 			}
 		}
 
 		// Add foreign key relationships
-		foreach (var prop in entity.Properties.Where(p => !string.IsNullOrWhiteSpace(p.ReferencedEntity)))
+		var foreignKeys = entity.Properties.Where(p => !string.IsNullOrWhiteSpace(p.ReferencedEntity)).ToArray();
+		if (foreignKeys.Any())
 		{
-			sb.AppendLine($"\t\tbuilder.HasOne(e => e.{prop.ReferencedEntity}).WithMany(e => e.{prop.ChildCollection}).HasForeignKey(x => x.{prop.Name}).OnDelete(DeleteBehavior.Restrict);");
+			sb.AppendLine();
+			for (int i = 0; i < foreignKeys.Length; i++)
+			{
+				var prop = foreignKeys[i];
+				var trailing = i == 0 ? "\t\t" : "";  // Only first foreign key has trailing spaces
+				sb.AppendLine($"\t\tbuilder.HasOne(e => e.{prop.ReferencedEntity}).WithMany(e => e.{prop.ChildCollection}).HasForeignKey(x => x.{prop.Name}).OnDelete(DeleteBehavior.Restrict);{trailing}");
+			}
 		}
 	}
 
@@ -122,7 +132,9 @@ public static class CodeGenerator
 	{
 		foreach (var prop in entity.Properties)
 		{
-			sb.AppendLine($"\tpublic {prop.ClrType}{NullableExpression(prop)} {prop.Name} {{ get; set; }}{DefaultExpression(prop)};");
+			var defaultExpr = DefaultExpression(prop);
+			var semicolon = string.IsNullOrEmpty(defaultExpr) ? "" : ";";
+			sb.AppendLine($"\tpublic {prop.ClrType}{NullableExpression(prop)} {prop.Name} {{ get; set; }}{defaultExpr}{semicolon}");
 		}
 
 		static string NullableExpression(PropertyDefinition prop) =>

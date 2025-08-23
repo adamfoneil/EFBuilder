@@ -84,7 +84,20 @@ public class EntityParsing
 				Assert.Fail($"Missing expected file: {expectedKey}. Available keys: {string.Join(", ", expectedOutputByName.Keys)}");
 			}
 			
-			Assert.AreEqual(expectedOutputByName[expectedKey].Content, actualOutputByName[file].Content, $"File: {file}");
+			// Write actual content to file for debugging
+			System.IO.File.WriteAllText($"/tmp/actual_{file}", actualOutputByName[file].Content);
+			System.IO.File.WriteAllText($"/tmp/expected_{file}", expectedOutputByName[expectedKey].Content);
+			
+			try
+			{
+				Assert.AreEqual(expectedOutputByName[expectedKey].Content, actualOutputByName[file].Content, $"File: {file}");
+				Console.WriteLine($"✓ {file} matches exactly");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"✗ {file} differs: {ex.Message}");
+				throw;
+			}
 		}
 	}
 }

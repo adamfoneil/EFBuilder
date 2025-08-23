@@ -48,7 +48,7 @@ public static class CodeGenerator
 		sb.AppendLine($"\tpublic void Configure(EntityTypeBuilder<{entity.Name}> builder)\n\t{{");
 		AddConfiguration(sb, entity);
 		sb.AppendLine("\t}");
-		sb.Append("}");
+		sb.AppendLine("}");
 
 		return sb.ToString();
 
@@ -83,9 +83,8 @@ public static class CodeGenerator
 			}
 			else
 			{
-				// For multi-property indexes, use navigation property names for foreign keys
-				var indexProperties = uniqueProperties.Select(p => 
-					!string.IsNullOrWhiteSpace(p.ReferencedEntity) ? $"e.{p.ReferencedEntity}" : $"e.{p.Name}");
+				// For multi-property indexes, use the actual property names
+				var indexProperties = uniqueProperties.Select(p => $"e.{p.Name}");
 				sb.AppendLine($"\t\tbuilder.HasIndex(e => new {{ {string.Join(", ", indexProperties)} }}).IsUnique();");
 			}
 		}

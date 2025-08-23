@@ -26,7 +26,7 @@ public class SpeciesConfiguration : IEntityTypeConfiguration<Species>
 		builder.Property(x => x.BaseName).IsRequired().HasMaxLength(50);
 		builder.Property(x => x.Abbreviation).IsRequired().HasMaxLength(3);
 
-		builder.HasIndex(e => new { e.Clinic, e.Name }).IsUnique();
+		builder.HasIndex(e => new { e.ClinicId, e.Name }).IsUnique();
 
 		builder.HasOne(e => e.Clinic).WithMany(e => e.Species).HasForeignKey(x => x.ClinicId).OnDelete(DeleteBehavior.Restrict);		
 		builder.HasOne(e => e.AppSpecies).WithMany(e => e.Species).HasForeignKey(x => x.AppSpeciesId).OnDelete(DeleteBehavior.Restrict);

@@ -13,14 +13,8 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 	public (EntityDefinition[] EntityDefinitions, string[] Errors) ParseEntities()
 	{
 		var entitySources = _contentAccessor.GetContent();
-		Console.WriteLine($"EntityParser: Found {entitySources.Length} entity sources");
-		foreach (var (name, source) in entitySources)
-		{
-			Console.WriteLine($"  Source: {name}, Length: {source.Length}");
-		}
-		
 		var entities = new List<EntityDefinition>();
-		var entityNames = entities.Select(e => e.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+		var entityNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
 		List<string> errors = [];
 
@@ -29,17 +23,15 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 			try
 			{				
 				var entity = ParseEntity(source, entityNames);
-				Console.WriteLine($"  Parsed entity: {entity.Name}");
-				entities.Add(entity);				
+				entities.Add(entity);
+				entityNames.Add(entity.Name);  // Add to known entity names
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"  Error parsing {name}: {ex.Message}");
 				errors.Add($"{name}: {ex.Message}");
 			}
 		}
 
-		Console.WriteLine($"EntityParser: Total parsed {entities.Count} entities");
 		return ([.. entities], [..errors]);
 	}
 
@@ -55,14 +47,14 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 
 		// Parse header: EntityName[: BaseClass]
 		var headerLine = lines[0];
-		var headerMatch = System.Text.RegularExpressions.Regex.Match(headerLine, @"^(\w+)\s*:\s*(\w+)$");
+		var headerMatch = System.Text.RegularExpressions.Regex.Match(headerLine, @"^(\w+)(?:\s*:\s*(\w+))?$");
 		if (!headerMatch.Success)
 			throw new Exception($"Invalid entity header: {headerLine}");
 
 		var entity = new EntityDefinition
 		{
 			Name = headerMatch.Groups[1].Value,
-			BaseClass = headerMatch.Groups[2].Value,
+			BaseClass = headerMatch.Groups[2].Success ? headerMatch.Groups[2].Value : null,
 			Properties = []
 		};
 
@@ -105,6 +97,8 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 				{
 					prop.ClrType = "int";
 					prop.ReferencedEntity = prop.Name.Substring(0, prop.Name.Length - 2);
+					// Set child collection to current entity name (use simple pluralization)
+					prop.ChildCollection = entity.Name.EndsWith("s") ? entity.Name : entity.Name + "s";
 				}
 				else
 				{

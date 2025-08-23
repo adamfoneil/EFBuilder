@@ -6,7 +6,7 @@ namespace Testing;
 public class EntityParsing
 {
 	[TestMethod]
-	public void Species()
+	public void Case1Schema()
 	{
 		var schema = new ResourceEnumerator("Testing.SpayWise.", [
 			"Clinic.md",

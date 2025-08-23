@@ -20,10 +20,47 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="SpayWise\Appointment.json" />
+    <None Remove="SpayWise\Appointment.md" />
+    <None Remove="SpayWise\AppointmentStatus.md" />
+    <None Remove="SpayWise\AppointmentType.md" />
+    <None Remove="SpayWise\AppSpecies.md" />
+    <None Remove="SpayWise\Breed.md" />
+    <None Remove="SpayWise\Clinic.md" />
+    <None Remove="SpayWise\efbuilder.settings.json" />
+    <None Remove="SpayWise\KennelSize.md" />
+    <None Remove="SpayWise\Location.md" />
+    <None Remove="SpayWise\Medical.md" />
+    <None Remove="SpayWise\MedicalItem.md" />
+    <None Remove="SpayWise\Patient.md" />
+    <None Remove="SpayWise\PaymentMethod.md" />
+    <None Remove="SpayWise\PendingItem.md" />
+    <None Remove="SpayWise\Species.md" />
+    <None Remove="SpayWise\Veterinarian.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Case1\AppSpecies.cs" />
     <EmbeddedResource Include="Case1\Breed.cs" />
     <EmbeddedResource Include="Case1\Clinic.cs" />
     <EmbeddedResource Include="Case1\Species.cs" />
+    <EmbeddedResource Include="SpayWise\Appointment.json" />
+    <EmbeddedResource Include="SpayWise\Appointment.md" />
+    <EmbeddedResource Include="SpayWise\AppointmentStatus.md" />
+    <EmbeddedResource Include="SpayWise\AppointmentType.md" />
+    <EmbeddedResource Include="SpayWise\AppSpecies.md" />
+    <EmbeddedResource Include="SpayWise\Breed.md" />
+    <EmbeddedResource Include="SpayWise\Clinic.md" />
+    <EmbeddedResource Include="SpayWise\efbuilder.settings.json" />
+    <EmbeddedResource Include="SpayWise\KennelSize.md" />
+    <EmbeddedResource Include="SpayWise\Location.md" />
+    <EmbeddedResource Include="SpayWise\Medical.md" />
+    <EmbeddedResource Include="SpayWise\MedicalItem.md" />
+    <EmbeddedResource Include="SpayWise\Patient.md" />
+    <EmbeddedResource Include="SpayWise\PaymentMethod.md" />
+    <EmbeddedResource Include="SpayWise\PendingItem.md" />
+    <EmbeddedResource Include="SpayWise\Species.md" />
+    <EmbeddedResource Include="SpayWise\Veterinarian.md" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -10,9 +10,11 @@ internal class ResourceEnumerator(string prefix, IEnumerable<string> fileNames) 
 
 	public (string Name, string Content)[] GetContent()
 	{
-		var resourceNames = Assembly.GetExecutingAssembly()
-			.GetManifestResourceNames()
-			.Join(_fileNames, name => name, name => $"{_prefix}.{name}", (resourceName, fileName) => resourceName, StringComparer.OrdinalIgnoreCase);
+		var allResources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+
+		var resourceNames = allResources
+			.Join(_fileNames, name => name, name => $"{_prefix}{name}", (resourceName, fileName) => resourceName, StringComparer.OrdinalIgnoreCase)
+			.ToArray();
 
 		List<(string Name, string Content)> results = [];
 

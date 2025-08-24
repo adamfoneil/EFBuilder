@@ -115,6 +115,31 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 				continue;
 			}
 
+			// PropertyName EntityName.ColumnName <CollectionName (custom column reference)
+			var customRefMatch = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)\.(\w+)\s*<(\w+)$", System.Text.RegularExpressions.RegexOptions.None);
+			if (customRefMatch.Success)
+			{
+				prop.Name = customRefMatch.Groups[1].Value;
+				prop.ReferencedEntity = customRefMatch.Groups[2].Value;
+				prop.ReferencedColumn = customRefMatch.Groups[3].Value;
+				prop.ChildCollection = customRefMatch.Groups[4].Value;
+				prop.ClrType = "int"; // Default to int for foreign keys, could be enhanced later
+				properties.Add(prop);
+				continue;
+			}
+
+			// PropertyName EntityName <CollectionName (standard entity reference)
+			var entityRefMatch = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)\s*<(\w+)$", System.Text.RegularExpressions.RegexOptions.None);
+			if (entityRefMatch.Success)
+			{
+				prop.Name = entityRefMatch.Groups[1].Value;
+				prop.ReferencedEntity = entityRefMatch.Groups[2].Value;
+				prop.ChildCollection = entityRefMatch.Groups[3].Value;
+				prop.ClrType = "int"; // Default to int for foreign keys
+				properties.Add(prop);
+				continue;
+			}
+
 			// PropertyName type(length)
 			var match = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)(?:\((\d+)\))?$", System.Text.RegularExpressions.RegexOptions.None);
 			if (match.Success)

@@ -102,10 +102,14 @@ public static class CodeGenerator
 			for (int i = 0; i < foreignKeys.Length; i++)
 			{
 				var prop = foreignKeys[i];
+				var navPropertyName = TrimIdEnding(prop.Name);
 				var trailing = i == 0 ? "\t\t" : "";  // Only first foreign key has trailing spaces
-				sb.AppendLine($"\t\tbuilder.HasOne(e => e.{prop.ReferencedEntity}).WithMany(e => e.{prop.ChildCollection}).HasForeignKey(x => x.{prop.Name}).OnDelete(DeleteBehavior.Restrict);{trailing}");
+				sb.AppendLine($"\t\tbuilder.HasOne(e => e.{navPropertyName}).WithMany(e => e.{prop.ChildCollection}).HasForeignKey(x => x.{prop.Name}).OnDelete(DeleteBehavior.Restrict);{trailing}");
 			}
 		}
+
+		static string TrimIdEnding(string name) =>
+			name.EndsWith("Id", StringComparison.OrdinalIgnoreCase) ? name[0..^2] : name;
 	}
 
 	private static void AddChildCollections(StringBuilder sb, string entityName, IEnumerable<EntityDefinition> allEntities)

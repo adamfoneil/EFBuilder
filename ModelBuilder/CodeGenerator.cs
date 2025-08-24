@@ -27,7 +27,7 @@ public static class CodeGenerator
 			$"""
 			using Microsoft.EntityFrameworkCore;
 			using Microsoft.EntityFrameworkCore.Metadata.Builders;
-			{UsingBaseClassNamespace(settings)}
+			{UsingBaseClassNamespace(settings, entity)}
 
 			namespace {settings.DefaultNamespace};
 
@@ -170,6 +170,8 @@ public static class CodeGenerator
 		}
 	}
 
-	private static string UsingBaseClassNamespace(Settings settings) =>
-		string.IsNullOrWhiteSpace(settings.BaseClassNamespace) ? string.Empty : $"using {settings.BaseClassNamespace};";
+	private static string UsingBaseClassNamespace(Settings settings, EntityDefinition entity) =>
+		string.IsNullOrWhiteSpace(settings.BaseClassNamespace) || string.IsNullOrWhiteSpace(entity.BaseClass) 
+			? string.Empty 
+			: $"using {settings.BaseClassNamespace};";
 }

@@ -20,7 +20,7 @@ public class ClinicUserConfiguration : IEntityTypeConfiguration<ClinicUser>
 {
 	public void Configure(EntityTypeBuilder<ClinicUser> builder)
 	{
-		builder.HasIndex(e => new { e.ClinicId, e. }).IsUnique();
+		builder.HasIndex(e => new { e.ClinicId, e.UserId }).IsUnique();
 
 		builder.HasOne(e => e.Clinic).WithMany(e => e.ClinicUsers).HasForeignKey(x => x.ClinicId).OnDelete(DeleteBehavior.Restrict);
 		builder.HasOne(e => e.User).WithMany(e => e.ClinicUsers).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);

@@ -26,11 +26,21 @@
             
             <!-- Left panel - Entity list -->
             <GroupBox Grid.Column="0" Header="Entities" Margin="0,0,5,0">
-                <ListBox ItemsSource="{Binding Entities}" 
-                         SelectedItem="{Binding SelectedEntity}"
-                         DisplayMemberPath="Name"
-                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                <DockPanel>
+                    <!-- Buttons at the top -->
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+                        <Button Name="AddEntityButton" Content="Add Entity" Click="AddEntityButton_Click" 
+                                Margin="0,0,5,0" Padding="8,3" 
+                                ToolTip="Save current entity and start a new one"/>
+                    </StackPanel>
+                    
+                    <!-- Entity list fills remaining space -->
+                    <ListBox ItemsSource="{Binding Entities}" 
+                             SelectedItem="{Binding SelectedEntity}"
+                             DisplayMemberPath="Name"
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                </DockPanel>
             </GroupBox>
             
             <!-- Splitter -->
@@ -47,15 +57,25 @@
                     <TabControl Grid.Row="0">
                         <!-- Markdown tab -->
                         <TabItem Header="Markdown Source">
-                            <TextBox Name="MarkdownTextBox" 
-                                     Text="{Binding MarkdownContent, UpdateSourceTrigger=PropertyChanged}"
-                                     AcceptsReturn="True"
-                                     AcceptsTab="True"
-                                     FontFamily="Consolas"
-                                     FontSize="12"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                     LostFocus="MarkdownTextBox_LostFocus"/>
+                            <DockPanel>
+                                <!-- Save button at the top -->
+                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5" HorizontalAlignment="Right">
+                                    <Button Name="SaveButton" Content="Save Entity" Click="SaveButton_Click" 
+                                            Padding="10,3" 
+                                            ToolTip="Save the current entity using the name from the first line"/>
+                                </StackPanel>
+                                
+                                <!-- Text editor fills remaining space -->
+                                <TextBox Name="MarkdownTextBox" 
+                                         Text="{Binding MarkdownContent, UpdateSourceTrigger=PropertyChanged}"
+                                         AcceptsReturn="True"
+                                         AcceptsTab="True"
+                                         FontFamily="Consolas"
+                                         FontSize="12"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         LostFocus="MarkdownTextBox_LostFocus"/>
+                            </DockPanel>
                         </TabItem>
                         
                         <!-- C# output tab -->

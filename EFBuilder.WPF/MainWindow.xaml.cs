@@ -326,6 +326,41 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
+    private void ScaffoldButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(SelectedDirectory))
+        {
+            MessageBox.Show("Please select a directory first before scaffolding.", "No Directory Selected", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        try
+        {
+            var dialog = new ScaffoldingDialog
+            {
+                Owner = this,
+                TargetDirectory = SelectedDirectory
+            };
+            
+            var result = dialog.ShowDialog();
+            
+            if (dialog.ScaffoldingCompleted)
+            {
+                // Refresh the entities list to show the newly scaffolded files
+                LoadEntitiesFromDirectory();
+                
+                MessageBox.Show("Scaffolding completed! The entity list has been refreshed.", 
+                    "Scaffolding Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error opening scaffolding dialog: {ex.Message}", "Scaffolding Error", 
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private void SettingsButton_Click(object sender, RoutedEventArgs e)
     {
         if (string.IsNullOrEmpty(SelectedDirectory))

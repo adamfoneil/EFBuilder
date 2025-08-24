@@ -181,6 +181,42 @@ public class EntityParsing
 		]);
 	}
 
+	[TestMethod]
+	public void SqlServerScaffolderTypeMappingTest()
+	{
+		var scaffolder = new SqlServerScaffolder();
+		var typeMapping = scaffolder.GetTypeMapping();
+
+		// Test basic CLR type mappings
+		Assert.AreEqual("string", typeMapping["varchar"]);
+		Assert.AreEqual("string", typeMapping["nvarchar"]);
+		Assert.AreEqual("int", typeMapping["int"]);
+		Assert.AreEqual("long", typeMapping["bigint"]);
+		Assert.AreEqual("bool", typeMapping["bit"]);
+		Assert.AreEqual("DateTime", typeMapping["datetime"]);
+		Assert.AreEqual("DateOnly", typeMapping["date"]);
+		Assert.AreEqual("TimeOnly", typeMapping["time"]);
+		Assert.AreEqual("decimal", typeMapping["decimal"]);
+		Assert.AreEqual("Guid", typeMapping["uniqueidentifier"]);
+		Assert.AreEqual("byte[]", typeMapping["varbinary"]);
+
+		// Test case insensitivity using TryGetValue
+		Assert.IsTrue(typeMapping.TryGetValue("VARCHAR", out var varcharType));
+		Assert.AreEqual("string", varcharType);
+		Assert.IsTrue(typeMapping.TryGetValue("INT", out var intType));
+		Assert.AreEqual("int", intType);
+
+		// Test that we have a reasonable number of mappings - check actual count first
+		Assert.IsTrue(typeMapping.Count >= 15, $"Expected at least 15 type mappings, got {typeMapping.Count}");
+		
+		// Verify we have the core SQL Server types
+		var expectedTypes = new[] { "varchar", "nvarchar", "int", "bigint", "bit", "datetime", "decimal", "uniqueidentifier" };
+		foreach (var type in expectedTypes)
+		{
+			Assert.IsTrue(typeMapping.ContainsKey(type), $"Missing type mapping for {type}");
+		}
+	}
+
 	// Helper methods for enhanced diagnostics
 	private static string CreateUnifiedDiff(string expected, string actual, string expectedFileName, string actualFileName)
 	{

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ModelBuilder/ModelBuilder.csproj" Id="852d9f67-8858-4661-a8b2-b51dae05ddfe" />
   <Project Path="Testing/Testing.csproj" />
+  <Project Path="EFBuilder.WPF/EFBuilder.WPF.csproj" />
 </Solution>

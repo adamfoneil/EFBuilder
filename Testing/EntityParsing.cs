@@ -501,6 +501,169 @@ public class EntityParsing
 	}
 
 	[TestMethod]
+	public void ExplicitFK()
+	{
+		if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
+
+		var schema = new ResourceEnumerator("Testing.ExplicitFK.", [
+			"Client.md",
+			"Clinic.md",
+			"Patient.md"
+		]);
+			
+		var (definitions, errors) = new EntityParser(schema).ParseEntities();
+
+		// Debug output to file
+		var debugInfo = new System.Text.StringBuilder();
+		debugInfo.AppendLine($"Found {definitions.Length} entities, {errors.Length} errors");
+		foreach (var error in errors)
+		{
+			debugInfo.AppendLine($"Error: {error}");
+		}
+		foreach (var entity in definitions)
+		{
+			debugInfo.AppendLine($"Entity: {entity.Name}, BaseClass: {entity.BaseClass ?? "None"}");
+			foreach (var prop in entity.Properties)
+			{
+				debugInfo.AppendLine($"  Property: {prop.Name}, Type: {prop.ClrType}, ReferencedEntity: {prop.ReferencedEntity ?? "None"}, ChildCollection: {prop.ChildCollection ?? "None"}, IsNullable: {prop.IsNullable}");
+			}
+		}
+
+		var settings = new CodeGenerator.Settings()
+		{
+			DefaultNamespace = "Generated",
+			BaseClassNamespace = "Testing.Conventions"
+		};
+
+		var actualFiles = CodeGenerator.Execute(settings, definitions);
+		
+		// Debug output to file
+		debugInfo.AppendLine($"Generated {actualFiles.Length} files:");
+		foreach (var file in actualFiles)
+		{
+			debugInfo.AppendLine($"  {file.Filename}");
+		}
+		
+		System.IO.File.WriteAllText("tmp/debug_explicit_fk.txt", debugInfo.ToString());
+		
+		var actualOutputByName = actualFiles.ToDictionary(f => f.Filename);
+
+		string[] outputFiles = [
+			"Client.cs",
+			"Clinic.cs",
+			"Patient.cs"
+		];
+
+		var expectedFiles = new ResourceEnumerator("Testing.ExplicitFK.", outputFiles);
+
+		var expectedOutput = expectedFiles.GetContent();
+		
+		// Debug expected output
+		debugInfo.AppendLine($"Expected output files:");
+		foreach (var exp in expectedOutput)
+		{
+			debugInfo.AppendLine($"  Name: '{exp.Name}', Content length: {exp.Content.Length}");
+		}
+		
+		System.IO.File.WriteAllText("tmp/debug_explicit_fk.txt", debugInfo.ToString());
+		
+		var expectedOutputByName = expectedOutput.ToDictionary(e => e.Name);
+		var failedFiles = new List<string>();
+
+		foreach (var file in outputFiles)
+		{
+			if (!actualOutputByName.ContainsKey(file))
+			{
+				Assert.Fail($"Missing generated file: {file}. Debug info written to tmp/debug_explicit_fk.txt");
+			}
+			
+			// The expected output has the full resource name with namespace prefix
+			var expectedKey = $"Testing.ExplicitFK.{file}";
+			if (!expectedOutputByName.ContainsKey(expectedKey))
+			{
+				Assert.Fail($"Missing expected file: {expectedKey}. Available keys: {string.Join(", ", expectedOutputByName.Keys)}");
+			}
+			
+			var actualContent = actualOutputByName[file].Content;
+			var expectedContent = expectedOutputByName[expectedKey].Content;
+			
+			// Write actual content to file for debugging
+			System.IO.File.WriteAllText($"tmp/actual_explicit_fk_{file}", actualContent);
+			System.IO.File.WriteAllText($"tmp/expected_explicit_fk_{file}", expectedContent);
+			
+			// Enhanced diagnostic output
+			// Use whitespace-tolerant comparison for the test result
+			var normalizedActual = NormalizeContentForComparison(actualContent);
+			var normalizedExpected = NormalizeContentForComparison(expectedContent);
+			var contentsMatch = normalizedActual == normalizedExpected;
+			
+			if (actualContent != expectedContent)
+			{
+				if (!contentsMatch)
+				{
+					failedFiles.Add(file);
+				}
+				debugInfo.AppendLine($"\n=== DETAILED COMPARISON FOR {file} ===");
+				debugInfo.AppendLine($"Exact match: {actualContent == expectedContent}");
+				debugInfo.AppendLine($"Normalized match: {contentsMatch}");
+				
+				// Create unified diff format
+				var diffOutput = CreateUnifiedDiff(expectedContent, actualContent, $"expected_{file}", $"actual_{file}");
+				debugInfo.AppendLine("UNIFIED DIFF:");
+				debugInfo.AppendLine(diffOutput);
+				
+				// Write diff to file for external examination
+				System.IO.File.WriteAllText($"tmp/diff_explicit_fk_{file}.txt", diffOutput);
+				
+				// Character-level analysis
+				var charDiff = FindFirstDifference(expectedContent, actualContent);
+				if (charDiff.HasValue)
+				{
+					debugInfo.AppendLine($"\nFirst difference at position {charDiff.Value.Position}:");
+					debugInfo.AppendLine($"Expected: '{charDiff.Value.Expected}' (char code: {(int)charDiff.Value.Expected})");
+					debugInfo.AppendLine($"Actual:   '{charDiff.Value.Actual}' (char code: {(int)charDiff.Value.Actual})");
+				}
+				
+				// Line-by-line comparison
+				debugInfo.AppendLine("\n=== LINE-BY-LINE COMPARISON ===");
+				var lineComparison = CompareLines(expectedContent, actualContent);
+				debugInfo.AppendLine(lineComparison);
+				
+				// Side-by-side comparison for easier reading
+				debugInfo.AppendLine("=== SIDE-BY-SIDE COMPARISON ===");
+				var sideBySide = CreateSideBySideComparison(expectedContent, actualContent);
+				debugInfo.AppendLine(sideBySide);
+				
+				Console.WriteLine($"✗ {file} differs - see tmp/debug_explicit_fk.txt and tmp/diff_explicit_fk_{file}.txt for details");
+			}
+			else
+			{
+				Console.WriteLine($"✓ {file} matches exactly");
+			}
+		}
+		
+		// Write comprehensive debug info
+		if (failedFiles.Any())
+		{
+			debugInfo.AppendLine($"\n=== SUMMARY ===");
+			debugInfo.AppendLine($"Failed files: {string.Join(", ", failedFiles)}");
+			debugInfo.AppendLine($"Passed files: {string.Join(", ", outputFiles.Except(failedFiles))}");
+			debugInfo.AppendLine($"\nFor external diff tools, compare these file pairs:");
+			foreach (var file in failedFiles)
+			{
+				debugInfo.AppendLine($"  tmp/expected_explicit_fk_{file} vs tmp/actual_explicit_fk_{file}");
+			}
+		}
+		
+		System.IO.File.WriteAllText("tmp/debug_explicit_fk.txt", debugInfo.ToString());
+		
+		if (failedFiles.Any())
+		{
+			Assert.Fail($"Content differs for {failedFiles.Count} file(s): {string.Join(", ", failedFiles)}. See detailed analysis in tmp/debug_explicit_fk.txt");
+		}
+	}
+
+	[TestMethod]
 	public void CustomPrimaryReference()
 	{
 		if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");

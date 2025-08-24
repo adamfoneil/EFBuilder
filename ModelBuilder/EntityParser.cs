@@ -128,6 +128,19 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 				continue;
 			}
 
+			// PropertyName EntityName? <CollectionName (nullable entity reference)
+			var nullableEntityRefMatch = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)\?\s*<(\w+)$", System.Text.RegularExpressions.RegexOptions.None);
+			if (nullableEntityRefMatch.Success)
+			{
+				prop.Name = nullableEntityRefMatch.Groups[1].Value;
+				prop.ReferencedEntity = nullableEntityRefMatch.Groups[2].Value;
+				prop.ChildCollection = nullableEntityRefMatch.Groups[3].Value;
+				prop.ClrType = "int"; // Default to int for foreign keys
+				prop.IsNullable = true; // The ? in EntityName? makes this nullable
+				properties.Add(prop);
+				continue;
+			}
+
 			// PropertyName EntityName <CollectionName (standard entity reference)
 			var entityRefMatch = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)\s*<(\w+)$", System.Text.RegularExpressions.RegexOptions.None);
 			if (entityRefMatch.Success)

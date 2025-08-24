@@ -46,6 +46,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="AutoIncrement\AspNetUsers.cs" />
+    <EmbeddedResource Include="AutoIncrement\AspNetUsers.md" />
     <EmbeddedResource Include="Case1\AppSpecies.cs" />
     <EmbeddedResource Include="Case1\Breed.cs" />
     <EmbeddedResource Include="Case1\Clinic.cs" />

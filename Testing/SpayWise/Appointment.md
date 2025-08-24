@@ -1,7 +1,7 @@
 Appointment : BaseTable
-#LocationId
-#TypeId AppointmentType
-#PatientId
+#LocationId <Appointments
+#TypeId AppointmentType <Appointments
+#PatientId <Appointments
 #Date DateOnly
 DropOff TimeOnly
 Pickup DateTime

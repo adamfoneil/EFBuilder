@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="SpayWise\Appointment.json" />
     <None Remove="SpayWise\Appointment.md" />
     <None Remove="SpayWise\AppointmentStatus.md" />
     <None Remove="SpayWise\AppointmentType.md" />
@@ -44,7 +43,6 @@
     <EmbeddedResource Include="Case1\Breed.cs" />
     <EmbeddedResource Include="Case1\Clinic.cs" />
     <EmbeddedResource Include="Case1\Species.cs" />
-    <EmbeddedResource Include="SpayWise\Appointment.json" />
     <EmbeddedResource Include="SpayWise\Appointment.md" />
     <EmbeddedResource Include="SpayWise\AppointmentStatus.md" />
     <EmbeddedResource Include="SpayWise\AppointmentType.md" />

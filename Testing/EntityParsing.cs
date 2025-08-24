@@ -167,6 +167,20 @@ public class EntityParsing
 		}
 	}
 
+	[TestMethod]
+	public void Case2Schema()
+	{
+		if (!Directory.Exists("tmp")) Directory.CreateDirectory("tmp");
+
+		var schema = new ResourceEnumerator("Testing.SpayWise.", [
+			"Location.md",
+			"Appointment.md",
+			"AppointmentType.md",
+			"Client.md",
+			"VolumeClient.md"
+		]);
+	}
+
 	// Helper methods for enhanced diagnostics
 	private static string CreateUnifiedDiff(string expected, string actual, string expectedFileName, string actualFileName)
 	{

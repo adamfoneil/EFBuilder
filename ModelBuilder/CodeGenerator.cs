@@ -112,6 +112,38 @@ public static class CodeGenerator
 			name.EndsWith("Id", StringComparison.OrdinalIgnoreCase) ? name[0..^2] : name;
 	}
 
+	/// <summary>
+	/// Gets child collections for all entities
+	/// </summary>
+	/// <param name="allEntities">All entity definitions in the schema</param>
+	/// <returns>Dictionary where key is entity name and value is array of child entity names</returns>
+	public static Dictionary<string, string[]> GetChildCollections(IEnumerable<EntityDefinition> allEntities)
+	{
+		var result = new Dictionary<string, string[]>();
+		
+		// Group by referenced entity to build child collections
+		var childCollections = allEntities
+			.SelectMany(e => e.Properties.Where(p => !string.IsNullOrWhiteSpace(p.ReferencedEntity) && p.ChildCollection is not null),
+				(e, p) => new { ParentEntity = p.ReferencedEntity!, ChildEntity = e.Name, ChildCollection = p.ChildCollection })
+			.GroupBy(x => x.ParentEntity)
+			.ToDictionary(g => g.Key, g => g.Select(x => x.ChildEntity).Distinct().ToArray());
+			
+		// Ensure all entities have an entry, even if empty
+		foreach (var entity in allEntities)
+		{
+			if (!childCollections.ContainsKey(entity.Name))
+			{
+				result[entity.Name] = [];
+			}
+			else
+			{
+				result[entity.Name] = childCollections[entity.Name];
+			}
+		}
+		
+		return result;
+	}
+
 	private static void AddChildCollections(StringBuilder sb, string entityName, IEnumerable<EntityDefinition> allEntities)
 	{
 		var childCollections = allEntities

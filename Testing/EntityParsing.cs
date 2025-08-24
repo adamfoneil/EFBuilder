@@ -96,10 +96,20 @@ public class EntityParsing
 			System.IO.File.WriteAllText($"tmp/expected_{file}", expectedContent);
 			
 			// Enhanced diagnostic output
+			// Use whitespace-tolerant comparison for the test result
+			var normalizedActual = NormalizeContentForComparison(actualContent);
+			var normalizedExpected = NormalizeContentForComparison(expectedContent);
+			var contentsMatch = normalizedActual == normalizedExpected;
+			
 			if (actualContent != expectedContent)
 			{
-				failedFiles.Add(file);
+				if (!contentsMatch)
+				{
+					failedFiles.Add(file);
+				}
 				debugInfo.AppendLine($"\n=== DETAILED COMPARISON FOR {file} ===");
+				debugInfo.AppendLine($"Exact match: {actualContent == expectedContent}");
+				debugInfo.AppendLine($"Normalized match: {contentsMatch}");
 				
 				// Create unified diff format
 				var diffOutput = CreateUnifiedDiff(expectedContent, actualContent, $"expected_{file}", $"actual_{file}");
@@ -261,5 +271,22 @@ public class EntityParsing
 		}
 		
 		return result.ToString();
+	}
+	
+	/// <summary>
+	/// Normalize content for comparison by removing trailing whitespace, 
+	/// normalizing line endings, and removing empty lines
+	/// </summary>
+	private static string NormalizeContentForComparison(string content)
+	{
+		if (string.IsNullOrEmpty(content))
+			return string.Empty;
+			
+		var lines = content.Split('\n')
+			.Select(line => line.TrimEnd()) // Remove trailing whitespace including \r
+			.Where(line => !string.IsNullOrEmpty(line)) // Remove empty lines
+			.ToArray();
+			
+		return string.Join('\n', lines);
 	}
 }

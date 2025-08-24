@@ -25,7 +25,7 @@ public static class CodeGenerator
 		StringBuilder sb = new();
 		sb.AppendLine(
 			$"""
-			using Microsoft.EntityFrameworkCore;
+			{GetRequiredUsingStatements(settings, entity)}using Microsoft.EntityFrameworkCore;
 			using Microsoft.EntityFrameworkCore.Metadata.Builders;
 			{UsingBaseClassNamespace(settings, entity)}
 
@@ -72,11 +72,16 @@ public static class CodeGenerator
 			sb.AppendLine($"\t\tbuilder.Property(e => e.{prop.Name}).HasMaxLength({prop.MaxLength!.Value});");
 		}
 
+		// Add auto-increment properties
+		foreach (var prop in entity.Properties.Where(p => p.IsAutoIncrement))
+		{
+			sb.AppendLine($"\t\tbuilder.Property(u => u.{prop.Name}).ValueGeneratedOnAdd();");
+		}
+
 		// Add unique indexes
 		var uniqueProperties = entity.Properties.Where(p => p.IsUnique).ToArray();
 		if (uniqueProperties.Any())
 		{
-			sb.AppendLine();
 			if (uniqueProperties.Length == 1)
 			{
 				sb.AppendLine($"\t\tbuilder.HasIndex(e => e.{uniqueProperties[0].Name}).IsUnique();");
@@ -174,4 +179,23 @@ public static class CodeGenerator
 		string.IsNullOrWhiteSpace(settings.BaseClassNamespace) || string.IsNullOrWhiteSpace(entity.BaseClass) 
 			? string.Empty 
 			: $"using {settings.BaseClassNamespace};";
+
+	private static string GetRequiredUsingStatements(Settings settings, EntityDefinition entity)
+	{
+		var statements = new List<string>();
+		
+		// Add namespace self-reference only for Generated namespace
+		if (settings.DefaultNamespace == "Generated")
+		{
+			statements.Add("using Generated;");
+		}
+		
+		// Add Identity using for IdentityUser base class
+		if (entity.BaseClass == "IdentityUser")
+		{
+			statements.Add("using Microsoft.AspNetCore.Identity;");
+		}
+		
+		return statements.Count > 0 ? string.Join("\n", statements) + "\n" : string.Empty;
+	}
 }

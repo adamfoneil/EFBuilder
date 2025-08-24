@@ -29,6 +29,10 @@ public class PropertyDefinition
 	public bool IsUnique { get; set; }
 	public bool CascadeDelete { get; set; }	
 	public string? ChildCollection { get; set; }
+	/// <summary>
+	/// indicates if this field should be auto-incrementing (ValueGeneratedOnAdd)
+	/// </summary>
+	public bool IsAutoIncrement { get; set; }
 	public bool ParseError { get; set; }
 	/// <summary>
 	/// error message if parsing failed

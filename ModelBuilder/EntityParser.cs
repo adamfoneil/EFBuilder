@@ -82,6 +82,13 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 				line = parts[0].Trim();
 			}
 
+			// Auto-increment
+			if (line.EndsWith("++"))
+			{
+				prop.IsAutoIncrement = true;
+				line = line.TrimEnd('+').Trim();
+			}
+
 			// Nullable
 			if (line.EndsWith("?"))
 			{

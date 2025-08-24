@@ -25,6 +25,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private EntityFileItem? _selectedEntity;
     private string _markdownContent = "";
     private string _csharpContent = "";
+    private AppSettings _settings;
 
     public string? SelectedDirectory
     {
@@ -34,6 +35,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             _selectedDirectory = value;
             OnPropertyChanged();
             LoadEntitiesFromDirectory();
+            
+            // Save the selected directory to settings
+            if (_settings != null)
+            {
+                _settings.LastSelectedDirectory = value;
+                _settings.Save();
+            }
         }
     }
 
@@ -75,6 +83,14 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     {
         InitializeComponent();
         DataContext = this;
+        
+        // Load settings and restore last directory
+        _settings = AppSettings.Load();
+        if (!string.IsNullOrEmpty(_settings.LastSelectedDirectory) && 
+            Directory.Exists(_settings.LastSelectedDirectory))
+        {
+            SelectedDirectory = _settings.LastSelectedDirectory;
+        }
     }
 
     private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -216,6 +232,83 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         catch (Exception ex)
         {
             MessageBox.Show($"Error copying to clipboard: {ex.Message}", "Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void AddEntityButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Save current entity if any
+        SaveCurrentEntity();
+        
+        // Clear the selected entity and content to start fresh
+        SelectedEntity = null;
+        MarkdownContent = "";
+        
+        // Focus on the markdown editor
+        MarkdownTextBox.Focus();
+    }
+
+    private void SaveButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(MarkdownContent))
+            {
+                MessageBox.Show("Cannot save: No content in the editor.", "Save Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Extract entity name from the first line
+            var lines = MarkdownContent.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+            {
+                MessageBox.Show("Cannot save: No content to determine entity name.", "Save Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var firstLine = lines[0].Trim();
+            if (string.IsNullOrWhiteSpace(firstLine))
+            {
+                MessageBox.Show("Cannot save: First line is empty. Cannot determine entity name.", "Save Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Extract entity name (everything before ':' if present, otherwise the whole line)
+            var entityName = firstLine.Contains(':') ? firstLine.Split(':')[0].Trim() : firstLine.Trim();
+            
+            if (string.IsNullOrWhiteSpace(entityName))
+            {
+                MessageBox.Show("Cannot save: Could not determine entity name from first line.", "Save Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Ensure we have a selected directory
+            if (string.IsNullOrEmpty(SelectedDirectory))
+            {
+                MessageBox.Show("Cannot save: No directory selected. Please select a directory first.", "Save Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Create the file path
+            var fileName = $"{entityName}.md";
+            var filePath = Path.Combine(SelectedDirectory, fileName);
+
+            // Save the file
+            File.WriteAllText(filePath, MarkdownContent);
+
+            // Refresh the entities list and select the new/updated entity
+            LoadEntitiesFromDirectory();
+            var entityItem = Entities.FirstOrDefault(e => string.Equals(e.Name, entityName, StringComparison.OrdinalIgnoreCase));
+            if (entityItem != null)
+            {
+                SelectedEntity = entityItem;
+            }
+
+            MessageBox.Show($"Entity '{entityName}' saved successfully!", "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving entity: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

@@ -26,6 +26,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string _markdownContent = "";
     private string _csharpContent = "";
     private AppSettings _settings;
+    private LocalSettings _localSettings;
 
     public string? SelectedDirectory
     {
@@ -35,6 +36,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             _selectedDirectory = value;
             OnPropertyChanged();
             LoadEntitiesFromDirectory();
+            
+            // Load local settings for this directory
+            if (!string.IsNullOrEmpty(value) && Directory.Exists(value))
+            {
+                _localSettings = SettingsDialog.LoadSettings(value);
+            }
+            else
+            {
+                _localSettings = new LocalSettings();
+            }
             
             // Save the selected directory to settings
             if (_settings != null)
@@ -86,6 +97,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         
         // Load settings and restore last directory
         _settings = AppSettings.Load();
+        _localSettings = new LocalSettings(); // Initialize with defaults
+        
         if (!string.IsNullOrEmpty(_settings.LastSelectedDirectory) && 
             Directory.Exists(_settings.LastSelectedDirectory))
         {
@@ -190,8 +203,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
             var settings = new CodeGenerator.Settings
             {
-                DefaultNamespace = "Generated",
-                BaseClassNamespace = "Generated.Conventions"
+                IdentityType = _localSettings.IdentityType,
+                DefaultNamespace = _localSettings.DefaultNamespace,
+                BaseClassNamespace = _localSettings.BaseClassNamespace
             };
 
             CSharpContent = CodeGenerator.Execute(settings, currentEntity, allDefinitions);
@@ -309,6 +323,40 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         catch (Exception ex)
         {
             MessageBox.Show($"Error saving entity: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void SettingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrEmpty(SelectedDirectory))
+        {
+            MessageBox.Show("Please select a directory first before configuring settings.", "No Directory Selected", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        try
+        {
+            var dialog = new SettingsDialog(_localSettings);
+            if (dialog.ShowDialog() == true)
+            {
+                // Update local settings with the edited values
+                _localSettings = dialog.Settings;
+                
+                // Save settings to file
+                SettingsDialog.SaveSettings(SelectedDirectory, _localSettings);
+                
+                // Regenerate C# content with new settings
+                GenerateCSharpContent();
+                
+                MessageBox.Show("Settings saved successfully!", "Settings Saved", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving settings: {ex.Message}", "Settings Error", 
+                MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

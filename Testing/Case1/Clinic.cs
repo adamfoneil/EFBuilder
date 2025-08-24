@@ -18,6 +18,6 @@ public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>
 	{
 		builder.Property(x => x.Name).IsRequired().HasMaxLength(100);
 
-		builder.HasIndex(e => e.Name).IsUnique().IsUnique();
+		builder.HasIndex(e => e.Name).IsUnique();
 	}
 }

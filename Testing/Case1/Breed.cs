@@ -17,7 +17,7 @@ public class BreedConfiguration : IEntityTypeConfiguration<Breed>
 	public void Configure(EntityTypeBuilder<Breed> builder)
 	{
 		builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
-		builder.HasIndex(e => e.Name).IsUnique().IsUnique();
+		builder.HasIndex(e => e.Name).IsUnique();
 		builder.HasOne(e => e.AppSpecies).WithMany(e => e.Breeds).HasForeignKey(x => x.AppSpeciesId).OnDelete(DeleteBehavior.Restrict);
 	}
 }

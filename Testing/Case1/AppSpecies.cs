@@ -18,6 +18,6 @@ public class AppSpeciesConfiguration : IEntityTypeConfiguration<AppSpecies>
 	{
 		builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
 
-		builder.HasIndex(e => e.Name).IsUnique().IsUnique();
+		builder.HasIndex(e => e.Name).IsUnique();
 	}
 }

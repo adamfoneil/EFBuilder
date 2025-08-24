@@ -79,7 +79,7 @@ public static class CodeGenerator
 			sb.AppendLine();
 			if (uniqueProperties.Length == 1)
 			{
-				sb.AppendLine($"\t\tbuilder.HasIndex(e => e.{uniqueProperties[0].Name}).IsUnique().IsUnique();");
+				sb.AppendLine($"\t\tbuilder.HasIndex(e => e.{uniqueProperties[0].Name}).IsUnique();");
 			}
 			else
 			{

@@ -35,7 +35,7 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 		return ([.. entities], [..errors]);
 	}
 
-	private EntityDefinition ParseEntity(string source, HashSet<string> entityNames)
+	private static EntityDefinition ParseEntity(string source, HashSet<string> entityNames)
 	{
 		var lines = source.Split('\n', StringSplitOptions.RemoveEmptyEntries)
 						.Select(l => l.Trim())

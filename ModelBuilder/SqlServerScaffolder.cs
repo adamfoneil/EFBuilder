@@ -282,13 +282,15 @@ public class SqlServerScaffolder : IScaffolder
         
         var query = @"
             SELECT 
-                kcu.COLUMN_NAME,
-                kcu.REFERENCED_TABLE_NAME
-            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                fk_kcu.COLUMN_NAME,
+                pk_kcu.TABLE_NAME AS REFERENCED_TABLE_NAME
+            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE fk_kcu
             INNER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
-                ON kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
-            WHERE kcu.TABLE_NAME = @tableName
-            AND kcu.TABLE_SCHEMA = 'dbo'";
+                ON fk_kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+            INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE pk_kcu
+                ON rc.UNIQUE_CONSTRAINT_NAME = pk_kcu.CONSTRAINT_NAME
+            WHERE fk_kcu.TABLE_NAME = @tableName
+            AND fk_kcu.TABLE_SCHEMA = 'dbo'";
             
         using var command = new SqlCommand(query, connection);
         command.Parameters.AddWithValue("@tableName", tableName);

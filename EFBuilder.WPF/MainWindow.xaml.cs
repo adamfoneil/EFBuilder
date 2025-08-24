@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,6 +26,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private EntityFileItem? _selectedEntity;
     private string _markdownContent = "";
     private string _csharpContent = "";
+    private LocalSettings _currentSettings = new();
 
     public string? SelectedDirectory
     {
@@ -34,6 +36,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             _selectedDirectory = value;
             OnPropertyChanged();
             LoadEntitiesFromDirectory();
+            LoadSettings();
         }
     }
 
@@ -174,8 +177,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
             var settings = new CodeGenerator.Settings
             {
-                DefaultNamespace = "Generated",
-                BaseClassNamespace = "Generated.Conventions"
+                IdentityType = _currentSettings.IdentityType,
+                DefaultNamespace = _currentSettings.DefaultNamespace,
+                BaseClassNamespace = _currentSettings.BaseClassNamespace
             };
 
             CSharpContent = CodeGenerator.Execute(settings, currentEntity, allDefinitions);
@@ -216,6 +220,75 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         catch (Exception ex)
         {
             MessageBox.Show($"Error copying to clipboard: {ex.Message}", "Copy Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void SettingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SettingsDialog(_currentSettings)
+        {
+            Owner = this
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            _currentSettings = dialog.Settings;
+            SaveSettings();
+            
+            // Regenerate C# content with new settings
+            GenerateCSharpContent();
+        }
+    }
+
+    private void LoadSettings()
+    {
+        if (string.IsNullOrEmpty(SelectedDirectory) || !Directory.Exists(SelectedDirectory))
+        {
+            _currentSettings = new LocalSettings();
+            return;
+        }
+
+        var settingsPath = Path.Combine(SelectedDirectory, "settings.json");
+        
+        if (File.Exists(settingsPath))
+        {
+            try
+            {
+                var json = File.ReadAllText(settingsPath);
+                var settings = JsonSerializer.Deserialize<LocalSettings>(json);
+                _currentSettings = settings ?? new LocalSettings();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading settings: {ex.Message}", "Settings Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _currentSettings = new LocalSettings();
+            }
+        }
+        else
+        {
+            _currentSettings = new LocalSettings();
+        }
+    }
+
+    private void SaveSettings()
+    {
+        if (string.IsNullOrEmpty(SelectedDirectory) || !Directory.Exists(SelectedDirectory))
+            return;
+
+        var settingsPath = Path.Combine(SelectedDirectory, "settings.json");
+        
+        try
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            var json = JsonSerializer.Serialize(_currentSettings, options);
+            File.WriteAllText(settingsPath, json);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving settings: {ex.Message}", "Settings Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

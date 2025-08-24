@@ -1,0 +1,67 @@
+﻿<Window x:Class="EFBuilder.WPF.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Settings" Height="400" Width="500"
+        WindowStartupLocation="CenterOwner" 
+        ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="Code Generation Settings" FontSize="16" FontWeight="Bold" Margin="0,0,0,20"/>
+        
+        <!-- Settings Form -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Identity Type -->
+            <Label Grid.Row="0" Grid.Column="0" Content="Identity Type:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Name="IdentityTypeTextBox" Text="{Binding IdentityType}" Margin="5"/>
+            
+            <!-- Default Namespace -->
+            <Label Grid.Row="1" Grid.Column="0" Content="Default Namespace:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Name="DefaultNamespaceTextBox" Text="{Binding DefaultNamespace}" Margin="5"/>
+            
+            <!-- Base Class Namespace -->
+            <Label Grid.Row="2" Grid.Column="0" Content="Base Class Namespace:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Name="BaseClassNamespaceTextBox" Text="{Binding BaseClassNamespace}" Margin="5"/>
+            
+            <!-- DbContext Class -->
+            <Label Grid.Row="3" Grid.Column="0" Content="DbContext Class:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Name="DbContextClassTextBox" Text="{Binding DbContextClass}" Margin="5"/>
+            
+            <!-- Descriptions -->
+            <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="Identity Type: The CLR type for entity identity properties (e.g., 'int', 'long', 'Guid')" 
+                       TextWrapping="Wrap" Margin="0,15,0,5" FontSize="11" Foreground="Gray"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="Default Namespace: The root namespace for generated entity classes (e.g., 'MyApp.Data')" 
+                       TextWrapping="Wrap" Margin="0,5" FontSize="11" Foreground="Gray"/>
+            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Text="Base Class Namespace: The namespace containing base entity classes (e.g., 'MyApp.Data.Conventions')" 
+                       TextWrapping="Wrap" Margin="0,5" FontSize="11" Foreground="Gray"/>
+            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Text="DbContext Class: The DbContext type for FK references and navigation properties (optional)" 
+                       TextWrapping="Wrap" Margin="0,5" FontSize="11" Foreground="Gray"/>
+        </Grid>
+        
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Name="OkButton" Content="OK" Click="OkButton_Click" Margin="5" Padding="20,8" IsDefault="True"/>
+            <Button Name="CancelButton" Content="Cancel" Click="CancelButton_Click" Margin="5" Padding="20,8" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

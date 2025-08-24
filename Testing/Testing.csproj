@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AutoIncrement\AspNetUsers.cs" />
     <Compile Remove="Case1\AppSpecies.cs" />
     <Compile Remove="Case1\Breed.cs" />
     <Compile Remove="Case1\Clinic.cs" />
@@ -44,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="AutoIncrement\AspNetUsers.cs" />
     <EmbeddedResource Include="Case1\AppSpecies.cs" />
     <EmbeddedResource Include="Case1\Breed.cs" />
     <EmbeddedResource Include="Case1\Clinic.cs" />

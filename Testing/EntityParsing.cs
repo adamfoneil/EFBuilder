@@ -182,6 +182,12 @@ public class EntityParsing
 	}
 
 	[TestMethod]
+	public void AutoIncrement()
+	{
+
+	}
+
+	[TestMethod]
 	public void SqlServerScaffolderTypeMappingTest()
 	{
 		var scaffolder = new SqlServerScaffolder();

@@ -19,6 +19,10 @@ public class PropertyDefinition
 	/// parsed from TypeExpression, not edited directly
 	/// </summary>
 	public string? ReferencedEntity { get; set; }
+	/// <summary>
+	/// specific column in the referenced entity (for custom primary references)
+	/// </summary>
+	public string? ReferencedColumn { get; set; }
 	public int? MaxLength { get; set; }
 	public bool IsNullable { get; set; }
 	public string? DefaultValue { get; set; }

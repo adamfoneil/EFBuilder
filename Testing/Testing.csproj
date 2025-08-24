@@ -17,6 +17,11 @@
     <Compile Remove="Case1\Breed.cs" />
     <Compile Remove="Case1\Clinic.cs" />
     <Compile Remove="Case1\Species.cs" />
+    <Compile Remove="Case2\Appointment.cs" />
+    <Compile Remove="Case2\AppointmentType.cs" />
+    <Compile Remove="Case2\Client.cs" />
+    <Compile Remove="Case2\Clinic.cs" />
+    <Compile Remove="Case2\Location.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +48,11 @@
     <EmbeddedResource Include="Case1\Breed.cs" />
     <EmbeddedResource Include="Case1\Clinic.cs" />
     <EmbeddedResource Include="Case1\Species.cs" />
+    <EmbeddedResource Include="Case2\Appointment.cs" />
+    <EmbeddedResource Include="Case2\AppointmentType.cs" />
+    <EmbeddedResource Include="Case2\Client.cs" />
+    <EmbeddedResource Include="Case2\Clinic.cs" />
+    <EmbeddedResource Include="Case2\Location.cs" />
     <EmbeddedResource Include="SpayWise\Appointment.md" />
     <EmbeddedResource Include="SpayWise\AppointmentStatus.md" />
     <EmbeddedResource Include="SpayWise\AppointmentType.md" />

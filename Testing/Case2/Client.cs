@@ -1,5 +1,4 @@
-﻿using Testing.Case1;
-using Testing.Conventions;
+﻿using Testing.Conventions;
 
 namespace Testing.Case2;
 

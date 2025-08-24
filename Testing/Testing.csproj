@@ -23,9 +23,13 @@
     <Compile Remove="Case2\Client.cs" />
     <Compile Remove="Case2\Clinic.cs" />
     <Compile Remove="Case2\Location.cs" />
+    <Compile Remove="CustomPrimaryRef\AspNetUsers.cs" />
+    <Compile Remove="CustomPrimaryRef\ClinicUser.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="CustomPrimaryRef\AspNetUsers.md" />
+    <None Remove="CustomPrimaryRef\ClinicUser.md" />
     <None Remove="SpayWise\Appointment.md" />
     <None Remove="SpayWise\AppointmentStatus.md" />
     <None Remove="SpayWise\AppointmentType.md" />
@@ -56,6 +60,10 @@
     <EmbeddedResource Include="Case2\Client.cs" />
     <EmbeddedResource Include="Case2\Clinic.cs" />
     <EmbeddedResource Include="Case2\Location.cs" />
+    <EmbeddedResource Include="CustomPrimaryRef\AspNetUsers.cs" />
+    <EmbeddedResource Include="CustomPrimaryRef\AspNetUsers.md" />
+    <EmbeddedResource Include="CustomPrimaryRef\ClinicUser.cs" />
+    <EmbeddedResource Include="CustomPrimaryRef\ClinicUser.md" />
     <EmbeddedResource Include="SpayWise\Appointment.md" />
     <EmbeddedResource Include="SpayWise\AppointmentStatus.md" />
     <EmbeddedResource Include="SpayWise\AppointmentType.md" />

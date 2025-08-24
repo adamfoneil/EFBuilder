@@ -16,8 +16,7 @@ public class Clinic
 	public string? EmergencyPhone { get; set; }
 
 	public ICollection<Client> Clients { get; set; } = [];	
-	public ICollection<Patient> Patients { get; set; } = [];
-	public ICollection<Species> Species { get; set; } = [];
+	public ICollection<Patient> Patients { get; set; } = [];	
 }
 
 public class ClinicConfiguration : IEntityTypeConfiguration<Clinic>

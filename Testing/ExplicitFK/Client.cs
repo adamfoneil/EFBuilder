@@ -1,8 +1,6 @@
 ﻿using Generated;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Testing.ExplicitFK.Generated;
-
 
 namespace Generated;
 

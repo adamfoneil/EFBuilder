@@ -1,5 +1,4 @@
-﻿namespace Testing.ExplicitFK;
-
+﻿using Generated;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Testing.Conventions;

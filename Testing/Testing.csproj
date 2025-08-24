@@ -25,11 +25,17 @@
     <Compile Remove="Case2\Location.cs" />
     <Compile Remove="CustomPrimaryRef\AspNetUsers.cs" />
     <Compile Remove="CustomPrimaryRef\ClinicUser.cs" />
+    <Compile Remove="ExplicitFK\Client.cs" />
+    <Compile Remove="ExplicitFK\Clinic.cs" />
+    <Compile Remove="ExplicitFK\Patient.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="CustomPrimaryRef\AspNetUsers.md" />
     <None Remove="CustomPrimaryRef\ClinicUser.md" />
+    <None Remove="ExplicitFK\Client.md" />
+    <None Remove="ExplicitFK\Clinic.md" />
+    <None Remove="ExplicitFK\Patient.md" />
     <None Remove="SpayWise\Appointment.md" />
     <None Remove="SpayWise\AppointmentStatus.md" />
     <None Remove="SpayWise\AppointmentType.md" />
@@ -64,6 +70,12 @@
     <EmbeddedResource Include="CustomPrimaryRef\AspNetUsers.md" />
     <EmbeddedResource Include="CustomPrimaryRef\ClinicUser.cs" />
     <EmbeddedResource Include="CustomPrimaryRef\ClinicUser.md" />
+    <EmbeddedResource Include="ExplicitFK\Client.cs" />
+    <EmbeddedResource Include="ExplicitFK\Client.md" />
+    <EmbeddedResource Include="ExplicitFK\Clinic.cs" />
+    <EmbeddedResource Include="ExplicitFK\Clinic.md" />
+    <EmbeddedResource Include="ExplicitFK\Patient.cs" />
+    <EmbeddedResource Include="ExplicitFK\Patient.md" />
     <EmbeddedResource Include="SpayWise\Appointment.md" />
     <EmbeddedResource Include="SpayWise\AppointmentStatus.md" />
     <EmbeddedResource Include="SpayWise\AppointmentType.md" />

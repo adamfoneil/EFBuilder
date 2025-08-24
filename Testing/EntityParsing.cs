@@ -223,6 +223,25 @@ public class EntityParsing
 		}
 	}
 
+	[TestMethod]
+	public void SqlServerScaffolderInstantiationTest()
+	{
+		// Test that SqlServerScaffolder can be instantiated without errors
+		var scaffolder = new SqlServerScaffolder();
+		Assert.IsNotNull(scaffolder);
+		
+		// Test that it implements IScaffolder interface
+		Assert.IsInstanceOfType(scaffolder, typeof(IScaffolder));
+		
+		// Test that GetTypeMapping returns valid mappings
+		var typeMapping = scaffolder.GetTypeMapping();
+		Assert.IsNotNull(typeMapping);
+		Assert.IsTrue(typeMapping.Count > 0);
+		
+		// Verify the interface contract
+		Assert.IsNotNull(typeMapping);
+	}
+
 	// Helper methods for enhanced diagnostics
 	private static string CreateUnifiedDiff(string expected, string actual, string expectedFileName, string actualFileName)
 	{

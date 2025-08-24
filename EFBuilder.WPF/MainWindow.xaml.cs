@@ -27,6 +27,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private string _csharpContent = "";
     private AppSettings _settings;
     private LocalSettings _localSettings;
+    private ObservableCollection<string> _childCollections = new();
 
     public string? SelectedDirectory
     {
@@ -90,6 +91,16 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     public ObservableCollection<EntityFileItem> Entities { get; } = new();
 
+    public ObservableCollection<string> ChildCollections
+    {
+        get => _childCollections;
+        set
+        {
+            _childCollections = value;
+            OnPropertyChanged();
+        }
+    }
+
     public MainWindow()
     {
         InitializeComponent();
@@ -128,14 +139,57 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         var markdownFiles = Directory.GetFiles(SelectedDirectory, "*.md");
         
+        // First, load all entities without child collection counts
         foreach (var file in markdownFiles)
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
             Entities.Add(new EntityFileItem
             {
                 Name = fileName,
-                FilePath = file
+                FilePath = file,
+                ChildCollectionCount = ""
             });
+        }
+        
+        // Then calculate child collection counts
+        UpdateChildCollectionCounts();
+    }
+    
+    private void UpdateChildCollectionCounts()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(SelectedDirectory))
+                return;
+                
+            var directoryEnumerator = new DirectoryEntityEnumerator(SelectedDirectory);
+            var parser = new EntityParser(directoryEnumerator);
+            var (allDefinitions, errors) = parser.ParseEntities();
+            
+            if (errors.Length == 0 && allDefinitions.Length > 0)
+            {
+                var childCollections = CodeGenerator.GetChildCollections(allDefinitions);
+                
+                foreach (var entity in Entities)
+                {
+                    if (childCollections.TryGetValue(entity.Name, out var children))
+                    {
+                        entity.ChildCollectionCount = children.Length > 0 ? $"({children.Length})" : "";
+                    }
+                    else
+                    {
+                        entity.ChildCollectionCount = "";
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // If there are parsing errors, just leave counts empty
+            foreach (var entity in Entities)
+            {
+                entity.ChildCollectionCount = "";
+            }
         }
     }
 
@@ -145,6 +199,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         {
             MarkdownContent = "";
             CSharpContent = "";
+            ChildCollections.Clear();
             return;
         }
 
@@ -156,6 +211,41 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         
         // Generate C# content 
         GenerateCSharpContent();
+        
+        // Update child collections
+        UpdateCurrentEntityChildCollections();
+    }
+    
+    private void UpdateCurrentEntityChildCollections()
+    {
+        ChildCollections.Clear();
+        
+        try
+        {
+            if (SelectedEntity == null || string.IsNullOrEmpty(SelectedDirectory))
+                return;
+                
+            var directoryEnumerator = new DirectoryEntityEnumerator(SelectedDirectory);
+            var parser = new EntityParser(directoryEnumerator);
+            var (allDefinitions, errors) = parser.ParseEntities();
+            
+            if (errors.Length == 0 && allDefinitions.Length > 0)
+            {
+                var childCollections = CodeGenerator.GetChildCollections(allDefinitions);
+                
+                if (childCollections.TryGetValue(SelectedEntity.Name, out var children))
+                {
+                    foreach (var child in children)
+                    {
+                        ChildCollections.Add(child);
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // If there are parsing errors, just leave child collections empty
+        }
     }
 
     private void GenerateCSharpContent()
@@ -394,10 +484,64 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+    
+    private void ChildCollectionsListBox_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        var listBox = sender as ListBox;
+        if (listBox?.SelectedItem is string childEntityName)
+        {
+            // Find the entity with this name in the entities list
+            var entityToSelect = Entities.FirstOrDefault(entity => 
+                string.Equals(entity.Name, childEntityName, StringComparison.OrdinalIgnoreCase));
+                
+            if (entityToSelect != null)
+            {
+                SelectedEntity = entityToSelect;
+            }
+        }
+    }
 }
 
-public class EntityFileItem
+public class EntityFileItem : INotifyPropertyChanged
 {
-    public string Name { get; set; } = "";
-    public string FilePath { get; set; } = "";
+    private string _name = "";
+    private string _filePath = "";
+    private string _childCollectionCount = "";
+
+    public string Name 
+    { 
+        get => _name;
+        set
+        {
+            _name = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public string FilePath 
+    { 
+        get => _filePath;
+        set
+        {
+            _filePath = value;
+            OnPropertyChanged();
+        }
+    }
+    
+    public string ChildCollectionCount 
+    { 
+        get => _childCollectionCount;
+        set
+        {
+            _childCollectionCount = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

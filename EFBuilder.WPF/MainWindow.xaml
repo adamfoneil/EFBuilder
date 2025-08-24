@@ -51,9 +51,24 @@
                     <!-- Entity list fills remaining space -->
                     <ListBox ItemsSource="{Binding Entities}" 
                              SelectedItem="{Binding SelectedEntity}"
-                             DisplayMemberPath="Name"
                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding ChildCollectionCount}" 
+                                               HorizontalAlignment="Right" 
+                                               Foreground="Gray" 
+                                               Margin="5,0,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </DockPanel>
             </GroupBox>
             
@@ -79,16 +94,37 @@
                                             ToolTip="Save the current entity using the name from the first line"/>
                                 </StackPanel>
                                 
-                                <!-- Text editor fills remaining space -->
-                                <TextBox Name="MarkdownTextBox" 
-                                         Text="{Binding MarkdownContent, UpdateSourceTrigger=PropertyChanged}"
-                                         AcceptsReturn="True"
-                                         AcceptsTab="True"
-                                         FontFamily="Consolas"
-                                         FontSize="12"
-                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                         LostFocus="MarkdownTextBox_LostFocus"/>
+                                <!-- Main content area with horizontal splitter -->
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="5"/>
+                                        <RowDefinition Height="200"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <!-- Text editor in upper area -->
+                                    <TextBox Grid.Row="0" Name="MarkdownTextBox" 
+                                             Text="{Binding MarkdownContent, UpdateSourceTrigger=PropertyChanged}"
+                                             AcceptsReturn="True"
+                                             AcceptsTab="True"
+                                             FontFamily="Consolas"
+                                             FontSize="12"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                             LostFocus="MarkdownTextBox_LostFocus"/>
+                                    
+                                    <!-- Horizontal splitter -->
+                                    <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
+                                    
+                                    <!-- Child collections area -->
+                                    <GroupBox Grid.Row="2" Header="Child Collections" Margin="0,5,0,0">
+                                        <ListBox Name="ChildCollectionsListBox"
+                                                 ItemsSource="{Binding ChildCollections}"
+                                                 MouseDoubleClick="ChildCollectionsListBox_MouseDoubleClick"
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                                    </GroupBox>
+                                </Grid>
                             </DockPanel>
                         </TabItem>
                         

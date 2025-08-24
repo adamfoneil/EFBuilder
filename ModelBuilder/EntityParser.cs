@@ -140,6 +140,18 @@ public class EntityParser(IEntityEnumerator contentAccessor)
 				continue;
 			}
 
+			// PropertyId <CollectionName (inferred entity reference from property name)
+			var inferredRefMatch = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+Id)\s*<(\w+)$", System.Text.RegularExpressions.RegexOptions.None);
+			if (inferredRefMatch.Success)
+			{
+				prop.Name = inferredRefMatch.Groups[1].Value;
+				prop.ReferencedEntity = prop.Name.Substring(0, prop.Name.Length - 2); // Remove "Id" suffix
+				prop.ChildCollection = inferredRefMatch.Groups[2].Value;
+				prop.ClrType = "int"; // Default to int for foreign keys
+				properties.Add(prop);
+				continue;
+			}
+
 			// PropertyName type(length)
 			var match = System.Text.RegularExpressions.Regex.Match(line, @"^(\w+)\s+(\w+)(?:\((\d+)\))?$", System.Text.RegularExpressions.RegexOptions.None);
 			if (match.Success)

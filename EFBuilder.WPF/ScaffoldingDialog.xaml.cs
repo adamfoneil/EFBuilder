@@ -15,10 +15,10 @@ public partial class ScaffoldingDialog : Window
     public ScaffoldingDialog()
     {
         InitializeComponent();
-        StatusTextBlock.Text = "Enter your SQL Server connection string and click Scaffold to generate entity definitions.";
+        StatusTextBlock.Text = "Enter your SQL Server connection string and click OK to generate entity definitions.";
     }
 
-    private async void ScaffoldButton_Click(object sender, RoutedEventArgs e)
+    private async void OkButton_Click(object sender, RoutedEventArgs e)
     {
         var connectionString = ConnectionStringTextBox.Text?.Trim();
         
@@ -45,7 +45,7 @@ public partial class ScaffoldingDialog : Window
         try
         {
             // Disable UI during scaffolding
-            ScaffoldButton.IsEnabled = false;
+            OkButton.IsEnabled = false;
             CancelButton.Content = "Close";
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.IsIndeterminate = true;
@@ -96,7 +96,7 @@ public partial class ScaffoldingDialog : Window
         finally
         {
             ProgressBar.Visibility = Visibility.Collapsed;
-            ScaffoldButton.IsEnabled = true;
+            OkButton.IsEnabled = true;
             CancelButton.Content = ScaffoldingCompleted ? "Close" : "Cancel";
         }
     }

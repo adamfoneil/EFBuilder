@@ -20,6 +20,9 @@
                 <Label Content="Directory:" VerticalAlignment="Center"/>
                 <TextBox Text="{Binding SelectedDirectory}" Width="400" VerticalAlignment="Center" Margin="5" IsReadOnly="True"/>
                 <Button Name="BrowseButton" Content="Browse..." Click="BrowseButton_Click" Margin="5" Padding="10,5"/>
+                <Button Name="ScaffoldButton" Content="Scaffold DB..." Click="ScaffoldButton_Click" 
+                        Margin="5" Padding="10,5" VerticalAlignment="Center"
+                        ToolTip="Generate entity definitions from database connection"/>
             </StackPanel>
             
             <Button Grid.Column="1" Name="SettingsButton" Content="Settings..." Click="SettingsButton_Click" 

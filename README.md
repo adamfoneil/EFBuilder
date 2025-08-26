@@ -16,3 +16,20 @@ An entity definition works like this:
 - there can be an optional default value, prefixed with an equal sign (such as `IsActive bool = true` would mean a bool field true by default
 - there can be an optional comment on the end preceded by two slashes, like you'd find in C#
   
+# Motivation
+Creating EF Core entity classes by hand is pretty, but there is a fair amount of boilerplate -- particularly in the `IEntityTypeConfiguration<T>` classes. I find the syntax around foreign keys kind of verbose, for example, but probably unavoidable. The goal here is to see if a "markdown-style" way to create this code is productive and workable for real apps.
+
+This came up suddenly while working on a new app idea, when I found it was really tedious to create all the entity classes by hand. You can of course scaffold out EF Core entities from an existing database. I have done that and that is a great feature. But I'm looking for a faster, more fluid experience of initial creation. In this particular situation, if I scaffolded an existing database, I'd have to modify the original to achieve some of the structural changes I'm after. It's a lot easier conceptualize a greenfield/cleansheet design than to _rework_ an old design. That's why EF Core scaffolding was not a fit here.
+
+# WPF App
+My original vision was to have text-only markdown files in your solution that are "compiled" by a custom tool. But a dedicated GUI makes navigation and viewing of inputs and outputs more straightforward.
+
+<img width="993" height="592" alt="image" src="https://github.com/user-attachments/assets/61ea7206-f9d1-4e20-8d08-799be67637d3" />
+
+<img width="308" height="181" alt="image" src="https://github.com/user-attachments/assets/2b281e13-6846-46a4-a515-06110748105c" />
+
+<img width="688" height="310" alt="image" src="https://github.com/user-attachments/assets/8fdfb494-300b-4b4a-a572-a8ba59970904" />
+
+# AI Assistance
+Quite a lot of this was "vibe coded". I've worked a lot in the past on data dictionary/ERD apps.
+

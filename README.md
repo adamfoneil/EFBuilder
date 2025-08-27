@@ -17,7 +17,7 @@ An entity definition works like this:
 - there can be an optional comment on the end preceded by two slashes, like you'd find in C#
   
 # Motivation
-Creating EF Core entity classes by hand is pretty, but there is a fair amount of boilerplate -- particularly in the `IEntityTypeConfiguration<T>` classes. I find the syntax around foreign keys kind of verbose, for example, but probably unavoidable. The goal here is to see if a "markdown-style" way to create this code is productive and workable for real apps.
+Creating EF Core entity classes by hand is doable, but there is a fair amount of boilerplate -- particularly in the `IEntityTypeConfiguration<T>` classes. I find the syntax around foreign keys kind of verbose, for example, but probably unavoidable. The goal here is to see if a "markdown-style" way to create this code is productive and workable for real apps.
 
 This came up suddenly while working on a new app idea, when I found it was really tedious to create all the entity classes by hand. You can of course scaffold out EF Core entities from an existing database. I have done that and that is a great feature. But I'm looking for a faster, more fluid experience of initial creation. In this particular situation, if I scaffolded an existing database, I'd have to modify the original to achieve some of the structural changes I'm after. It's a lot easier to conceptualize a greenfield/cleansheet design than to _rework_ an old design. That's why EF Core scaffolding was not a fit here.
 
